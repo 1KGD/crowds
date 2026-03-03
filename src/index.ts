@@ -1,10 +1,11 @@
 import * as wasm from 'wasm-utils';
 import Phaser from 'phaser';
 
-await wasm.default();
+import Engine from './engine/Engine';
 
-new Phaser.Game({
-    fee
-});
+async function main(): Promise<void> {
+    await wasm.default();
+    new Engine;
+}
 
-wasm.greet();
+main().catch(err => { throw err; });
