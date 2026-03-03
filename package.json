@@ -15,10 +15,11 @@
   "type": "module",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite . & make watch"
   },
   "dependencies": {
-    "phaser": "^3.90.0"
+    "phaser": "^3.90.0",
+    "wasm-utils": "file:./pkg"
   },
   "devDependencies": {
     "eslint": "^10.0.2",
