@@ -21,9 +21,9 @@ export default class Arena extends Phaser.Scene {
     }
 
     public preload(): void {
-        this.load.spritesheet(ArenaAssets.PLAYER_SPRITESHEET, playerSpritesheetUrl,{
+        this.load.spritesheet(ArenaAssets.PLAYER_SPRITESHEET, playerSpritesheetUrl, {
             frameWidth: 16,
             frameHeight: 32
-        })
+        });
     }
 }

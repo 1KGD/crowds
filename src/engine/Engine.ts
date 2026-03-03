@@ -7,6 +7,7 @@ export default class Engine extends Phaser.Game {
     public constructor() {
         super({
             type: Phaser.AUTO,
+            pixelArt: true,
             width: 256,
             height: 256,
             scene: new Arena(),
