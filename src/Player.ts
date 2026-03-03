@@ -25,6 +25,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         this.setupAnims();
         this.keys = this.setupControls();
+
+        this.scene.physics.add.existing(this);
     }
 
     private setupAnims(): void {
@@ -71,14 +73,17 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.x += normalized.x * delta * 0.1;
             this.y += normalized.y * delta * 0.1;
 
+            this.x = Phaser.Math.Clamp(this.x, this.width / 2, this.scene.scale.width - this.width / 2);
+            this.y = Phaser.Math.Clamp(this.y, this.height / 2, this.scene.scale.height - this.height / 2);
+
             let anim;
             if (dir.x !== 0) anim = dir.x < 0 ? PlayerAnimations.WALK_LEFT : PlayerAnimations.WALK_RIGHT;
             else anim = dir.y < 0 ? PlayerAnimations.WALK_UP : PlayerAnimations.WALK_DOWN;
 
-            if (this.anims.getName() !== anim) this.anims.play(anim);
+            if (this.anims.getName() !== anim) this.play(anim);
         } else if (this.anims.isPlaying) {
             this.anims.restart();
-            this.anims.stop();
+            this.stop();
         }
     }
 }

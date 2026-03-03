@@ -11,7 +11,7 @@ export default class Engine extends Phaser.Game {
             width: 256,
             height: 256,
             scene: new Arena(),
-            parent: document.getElementById("display") as HTMLCanvasElement
+            parent: document.getElementById("display") as HTMLCanvasElement,
         });
     }
 }

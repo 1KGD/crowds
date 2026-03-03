@@ -11,7 +11,14 @@ export default class Arena extends Phaser.Scene {
     public player: Player | null = null;
 
     public constructor() {
-        super({});
+        super({
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    debug: true
+                }
+            }
+        });
     }
 
     public create(): void {
