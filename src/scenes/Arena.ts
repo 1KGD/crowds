@@ -14,13 +14,13 @@ export default class Arena extends Phaser.Scene {
         super({});
     }
 
-    public create() {
-        this.player = new Player(this, 50, 50);
+    public create(): void {
+        this.player = new Player(this, 0, 0);
         this.add.existing(this.player);
         console.log(this.player);
     }
 
-    public preload() {
+    public preload(): void {
         this.load.spritesheet(ArenaAssets.PLAYER_SPRITESHEET, playerSpritesheetUrl,{
             frameWidth: 16,
             frameHeight: 32

@@ -1,6 +1,8 @@
 import * as wasm from 'wasm-utils';
 import Phaser from 'phaser';
 
+import './index.css';
+
 import Engine from './engine/Engine';
 
 async function main(): Promise<void> {
