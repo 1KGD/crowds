@@ -2,7 +2,7 @@ build:
 	wasm-pack build --target web
 
 watch:
-	cargo watch -- make build
+	cargo watch --watch **/*.rs -- make build
 
 install:
 	cargo install wasm-pack

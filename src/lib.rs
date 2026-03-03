@@ -9,5 +9,5 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn greet() {
-    alert("Hello, World (from rust)!");
+    alert("Hello, World (from rfoust)!");
 }
