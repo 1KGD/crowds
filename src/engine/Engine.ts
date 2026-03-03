@@ -1,7 +1,8 @@
 import Phaser from "phaser";
-import Arena from "../scenes/Arena";
 
 import './engine.css';
+import Boot from "../scenes/Boot";
+import Arena from "../scenes/Arena";
 
 export default class Engine extends Phaser.Game {
     public constructor() {
@@ -10,8 +11,10 @@ export default class Engine extends Phaser.Game {
             pixelArt: true,
             width: 256,
             height: 256,
-            scene: new Arena(),
+            scene: new Boot,
             parent: document.getElementById("display") as HTMLCanvasElement,
         });
+
+        this.scene.add("Arena", new Arena);
     }
 }

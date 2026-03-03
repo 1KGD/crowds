@@ -74,13 +74,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.y += normalized.y * delta * 0.1;
 
             this.x = Phaser.Math.Clamp(this.x, this.width / 2, this.scene.scale.width - this.width / 2);
-            this.y = Phaser.Math.Clamp(this.y, this.height / 2, this.scene.scale.height - this.height / 2);
+            this.y = Phaser.Math.Clamp(this.y, this.height / 3, this.scene.scale.height - this.height / 3);
 
             let anim;
             if (dir.x !== 0) anim = dir.x < 0 ? PlayerAnimations.WALK_LEFT : PlayerAnimations.WALK_RIGHT;
             else anim = dir.y < 0 ? PlayerAnimations.WALK_UP : PlayerAnimations.WALK_DOWN;
 
-            if (this.anims.getName() !== anim) this.play(anim);
+            if (this.anims.getName() !== anim || !this.anims.isPlaying) this.play(anim);
         } else if (this.anims.isPlaying) {
             this.anims.restart();
             this.stop();

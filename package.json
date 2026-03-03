@@ -18,6 +18,7 @@
     "dev": "vite . & make watch"
   },
   "dependencies": {
+    "@colyseus/sdk": "^0.17.34",
     "@eslint/js": "^10.0.1",
     "phaser": "^3.90.0",
     "wasm-utils": "file:./pkg"

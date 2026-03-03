@@ -15,7 +15,7 @@ export default class Arena extends Phaser.Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: true
+                   // debug: true
                 }
             }
         });
@@ -24,7 +24,6 @@ export default class Arena extends Phaser.Scene {
     public create(): void {
         this.player = new Player(this, 0, 0);
         this.add.existing(this.player);
-        console.log(this.player);
     }
 
     public preload(): void {
