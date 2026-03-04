@@ -74,7 +74,7 @@ export default class Player extends CommonPlayer {
     }
 
     protected override onPosUpdate(pos: { x: number; y: number; }): void {
-        if (Math.abs(this.x - pos.x) > 5) this.x = pos.x;
-        if (Math.abs(this.y - pos.y) > 5) this.y = pos.y;
+        if (Math.abs(this.x - pos.x) > 10) this.x = pos.x;
+        if (Math.abs(this.y - pos.y) > 10) this.y = pos.y;
     }
 }

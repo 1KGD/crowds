@@ -32,9 +32,7 @@ export default class Arena extends Phaser.Scene {
 
         const roomCallbacks = Colyseus.Callbacks.get(this.game.multiplayer.room);
         roomCallbacks.onAdd("players", (player, sessionId) => {
-            console.log(sessionId);
             if (sessionId === this.game.multiplayer.room.sessionId) return;
-            console.log(player);
             this.add.existing(new NetwokPlayer(this, player.pos.x, player.pos.y, sessionId));
         });
     }
