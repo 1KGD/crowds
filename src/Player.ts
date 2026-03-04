@@ -40,8 +40,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         callbacks.onAdd("players", (player, sessionId) => {
             if (sessionId !== this.scene.game.multiplayer.room.sessionId) return;
             callbacks.listen(player, "pos", (current, _previous) => {
-                callbacks.listen(current, "x", (x, _) => { this.x = x; });
-                callbacks.listen(current, "y", (y, _) => { this.y = y; });
+                callbacks.listen(current, "x", (x, _) => { if (Math.abs(this.x - x) > 5) this.x = x; });
+                callbacks.listen(current, "y", (y, _) => { if (Math.abs(this.y - y) > 5) this.y = y; });
             });
         });
     }
