@@ -13,8 +13,6 @@ export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState, client
 
     private playerIntervals: { [key: string]: Colyseus.Delayed };
 
-    // IMPORTANT: Receiving updates 60 times a second, therefore delta will not work!
-
     public override messages: Colyseus.Messages<this> = {
         0: (client: Client, payload: { x: number, y: number }) => {
             const constrolsState = this.state.players.get(client.sessionId).controlsState;

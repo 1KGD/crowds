@@ -1,16 +1,10 @@
 import Phaser from "phaser";
 import * as Colyseus from '@colyseus/sdk';
 
-import Arena, { ArenaAssets } from "./scenes/Arena";
-import Message from "./schema/messages";
-import { PlayerState } from "./schema/Arena";
-
-const enum PlayerAnimations {
-    WALK_DOWN = "walkDown",
-    WALK_UP = 'walkUp',
-    WALK_LEFT = 'walkLeft',
-    WALK_RIGHT = 'walkRight',
-}
+import Arena, { ArenaAssets } from "../scenes/Arena";
+import Message from "../schema/messages";
+import { PlayerState } from "../schema/Arena";
+import CommonPlayer, { PlayerAnimations } from "./CommonPlayer";
 
 const enum PlayerControls {
     DOWN = 'down',
@@ -19,47 +13,20 @@ const enum PlayerControls {
     RIGHT = 'right',
 }
 
-export default class Player extends Phaser.GameObjects.Sprite {
+export default class Player extends CommonPlayer {
     private readonly keys: { [key in PlayerControls]: Phaser.Input.Keyboard.Key };
-
-    public override scene: Arena;
-
     private get networkData(): PlayerState {
         return this.scene.game.multiplayer.room.state.players.get(this.scene.game.multiplayer.room.sessionId);
     }
 
-    public constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, ArenaAssets.PLAYER_SPRITESHEET);
-        this.addToUpdateList();
-
-        this.setupAnims();
-        this.keys = this.setupControls();
-        this.scene.physics.add.existing(this);
-
-        const callbacks = Colyseus.Callbacks.get(this.scene.game.multiplayer.room);
-        callbacks.onAdd("players", (player, sessionId) => {
-            if (sessionId !== this.scene.game.multiplayer.room.sessionId) return;
-            callbacks.listen(player, "pos", (current, _previous) => {
-                callbacks.listen(current, "x", (x, _) => { if (Math.abs(this.x - x) > 5) this.x = x; });
-                callbacks.listen(current, "y", (y, _) => { if (Math.abs(this.y - y) > 5) this.y = y; });
-            });
-        });
+    protected get sessionId(): string {
+        return this.scene.game.multiplayer.room.sessionId;
     }
 
-    private setupAnims(): void {
-        const walkAnim = (key: string, range: Phaser.Types.Animations.GenerateFrameNumbers): void => {
-            this.anims.create({
-                key,
-                frames: this.anims.generateFrameNumbers(ArenaAssets.PLAYER_SPRITESHEET, range),
-                frameRate: 10,
-                repeat: -1
-            });
-        };;
-
-        walkAnim(PlayerAnimations.WALK_DOWN, { start: 0, end: 3 });
-        walkAnim(PlayerAnimations.WALK_UP, { start: 34, end: 37 });
-        walkAnim(PlayerAnimations.WALK_LEFT, { start: 51, end: 54 });
-        walkAnim(PlayerAnimations.WALK_RIGHT, { start: 17, end: 20 });
+    public constructor(scene: Arena, x: number, y: number) {
+        super(scene, x, y);
+        this.keys = this.setupControls();
+        this.setupNetworkCallbacks();
     }
 
     private setupControls(): { [key in PlayerControls]: Phaser.Input.Keyboard.Key } {
@@ -104,5 +71,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
 
         if (dir.x !== this.networkData.controlsState.x || dir.y !== this.networkData.controlsState.y) this.scene.game.multiplayer.room?.send(Message.CONTROLS_UPDATE, dir);
+    }
+
+    protected override onPosUpdate(pos: { x: number; y: number; }): void {
+        if (Math.abs(this.x - pos.x) > 5) this.x = pos.x;
+        if (Math.abs(this.y - pos.y) > 5) this.y = pos.y;
     }
 }

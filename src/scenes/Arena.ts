@@ -1,8 +1,10 @@
 import Phaser from "phaser";
-import Player from '../Player';
+import Player from '../entities/Player';
+import * as Colyseus from '@colyseus/sdk';
 
 import playerSpritesheetUrl from '../assets/player.png?url';
 import Engine from "../engine/Engine";
+import NetwokPlayer from "../entities/NetworkPlayer";
 
 export const enum ArenaAssets {
     PLAYER_SPRITESHEET = "player_spritesheet"
@@ -27,6 +29,14 @@ export default class Arena extends Phaser.Scene {
     public create(): void {
         this.player = new Player(this, 0, 0);
         this.add.existing(this.player);
+
+        const roomCallbacks = Colyseus.Callbacks.get(this.game.multiplayer.room);
+        roomCallbacks.onAdd("players", (player, sessionId) => {
+            console.log(sessionId);
+            if (sessionId === this.game.multiplayer.room.sessionId) return;
+            console.log(player);
+            this.add.existing(new NetwokPlayer(this, player.pos.x, player.pos.y, sessionId));
+        });
     }
 
     public preload(): void {
