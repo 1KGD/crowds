@@ -6,7 +6,7 @@ import Arena from "../scenes/Arena";
 import Multiplayer from "./Multiplayer";
 
 export default class Engine extends Phaser.Game {
-    private readonly multiplayer: Multiplayer;
+    public readonly multiplayer: Multiplayer;
 
     public constructor() {
         super({
@@ -14,12 +14,19 @@ export default class Engine extends Phaser.Game {
             pixelArt: true,
             width: 256,
             height: 256,
-            scene: new Boot,
             parent: document.getElementById("display") as HTMLCanvasElement,
         });
 
         this.multiplayer = new Multiplayer;
 
+        this.scene.add("Boot", new Boot);
         this.scene.add("Arena", new Arena);
+
+        void this.launch();
+    }
+
+    private async launch(): Promise<void> {
+        await this.multiplayer.connect();
+        this.scene.start("Boot");
     }
 }

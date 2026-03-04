@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Player from '../Player';
 
 import playerSpritesheetUrl from '../assets/player.png?url';
+import Engine from "../engine/Engine";
 
 export const enum ArenaAssets {
     PLAYER_SPRITESHEET = "player_spritesheet"
@@ -10,12 +11,14 @@ export const enum ArenaAssets {
 export default class Arena extends Phaser.Scene {
     public player: Player | null = null;
 
+    public override game: Engine;
+
     public constructor() {
         super({
             physics: {
                 default: 'arcade',
                 arcade: {
-                   // debug: true
+                    // debug: true
                 }
             }
         });

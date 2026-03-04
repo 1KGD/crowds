@@ -5,9 +5,13 @@ import ArenaState from "../schema/Arena";
 
 export default class Multiplayer {
     private readonly client: Colyseus.Client;
+    public room: Colyseus.Room<ArenaState>;
 
     public constructor() {
         this.client = new Colyseus.Client("/api/");
-        this.client.joinOrCreate(Rooms.LOBBY, {}, ArenaState);
+    }
+
+    public async connect(): Promise<void> {
+        this.room = await this.client.joinOrCreate(Rooms.ARENA, {}, ArenaState);
     }
 }

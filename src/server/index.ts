@@ -4,6 +4,7 @@ import { playground } from '@colyseus/playground';
 
 import Rooms from "../schema/rooms";
 import config from '../config';
+import ArenaRoom from "./ArenaRoom";
 
 class GameServer extends Server {
     private expressApp: express.Application;
@@ -16,8 +17,7 @@ class GameServer extends Server {
         });
 
         this.define(Rooms.LOBBY, LobbyRoom).enableRealtimeListing();
-
-        console.log(this["~rooms"]);
+        this.define(Rooms.ARENA, ArenaRoom);
     }
 
     private setupRoutes(): void {
