@@ -11,6 +11,8 @@ type Client = Colyseus.Client<{
 export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState, client: Client }> {
     public override state = new ArenaState();
 
+    private playerIntervals: { [key: string]: Colyseus.Delayed };
+
     // IMPORTANT: Receiving updates 60 times a second, therefore delta will not work!
 
     public override messages: Colyseus.Messages<this> = {
@@ -21,11 +23,21 @@ export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState, client
         }
     };
 
+    public override onCreate(options: {}): void {
+        this.playerIntervals = {};
+    }
+
     public override onJoin(client: Client, options?: {}, auth?: {}): void {
         const player = new PlayerState;
         client.view = new StateView;
         this.state.players.set(client.sessionId, player);
         client.view.add(player);
-        this.clock.setInterval(() => player.update(1000 / 20), 1 / 20);
+        this.playerIntervals[client.sessionId] = this.clock.setInterval(() => player.update(1000 / 20), 1 / 20);
+    }
+
+    public override onLeave(client: Client, code?: number): void {
+        this.state.players.delete(client.sessionId);
+        this.playerIntervals[client.sessionId].clear();
+        delete this.playerIntervals[client.sessionId];
     }
 }
