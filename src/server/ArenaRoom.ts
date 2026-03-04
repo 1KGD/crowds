@@ -1,5 +1,6 @@
 import * as Colyseus from 'colyseus';
 import ArenaState, { PlayerState } from '../schema/Arena';
+import { StateView } from '@colyseus/schema';
 
 type Client = Colyseus.Client<{
     messages: {
@@ -10,29 +11,21 @@ type Client = Colyseus.Client<{
 export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState, client: Client }> {
     public override state = new ArenaState();
 
-    private get delta(): number {
-        return this.clock.deltaTime / 1000;
-    }
+    // IMPORTANT: Receiving updates 60 times a second, therefore delta will not work!
 
     public override messages: Colyseus.Messages<this> = {
         0: (client: Client, payload: { x: number, y: number }) => {
-            const pos = this.state.players.get(client.sessionId).pos;
-
-            if (payload.x !== 0) payload.x = payload.x / Math.abs(payload.x);
-            if (payload.y !== 0) payload.y = payload.y / Math.abs(payload.y);
-
-            const dist = Math.sqrt(payload.x ** 2 + payload.y ** 2);
-            if (dist > 0) {
-                pos.x += payload.x / dist * this.delta * 40;
-                pos.y += payload.y / dist * this.delta * 40;
-
-                pos.x = Math.max(0, Math.min(pos.x, 256));
-                pos.y = Math.max(0, Math.min(pos.y, 256));
-            }
+            const constrolsState = this.state.players.get(client.sessionId).controlsState;
+            constrolsState.x = payload.x !== 0 ? payload.x / Math.abs(payload.x) : 0;
+            constrolsState.y = payload.y !== 0 ? payload.y / Math.abs(payload.y) : 0;
         }
     };
 
     public override onJoin(client: Client, options?: {}, auth?: {}): void {
-        this.state.players.set(client.sessionId, new PlayerState());
+        const player = new PlayerState;
+        client.view = new StateView;
+        this.state.players.set(client.sessionId, player);
+        client.view.add(player);
+        this.clock.setInterval(() => player.update(1000 / 20), 1 / 20);
     }
 }
