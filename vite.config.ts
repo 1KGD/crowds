@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import preloadPlugin from 'vite-preload/plugin';
-import config from './src/config';
+import config from './config';
 
 export default defineConfig({
     server: {

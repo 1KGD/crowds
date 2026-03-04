@@ -3,7 +3,7 @@ import { LobbyRoom, Server, WebSocketTransport } from 'colyseus';
 import { playground } from '@colyseus/playground';
 
 import Rooms from "../schema/rooms";
-import config from '../config';
+import config from '../../config';
 import ArenaRoom from "./ArenaRoom";
 
 class GameServer extends Server {
