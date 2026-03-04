@@ -1,6 +1,8 @@
 import express from "express";
 import { LobbyRoom, Server, WebSocketTransport } from 'colyseus';
 import { playground } from '@colyseus/playground';
+
+import Rooms from "../schema/rooms";
 import config from '../config';
 
 class GameServer extends Server {
@@ -13,7 +15,9 @@ class GameServer extends Server {
             transport: new WebSocketTransport()
         });
 
-        this.define(LobbyRoom).enableRealtimeListing();
+        this.define(Rooms.LOBBY, LobbyRoom).enableRealtimeListing();
+
+        console.log(this["~rooms"]);
     }
 
     private setupRoutes(): void {

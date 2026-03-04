@@ -15,7 +15,7 @@
     "type": "module",
     "main": "index.html",
     "scripts": {
-        "colyseus-dev": "tsx src/server/index.ts",
+        "colyseus-dev": "tsx --watch src/server/index.ts",
         "dev": "concurrently --kill-others --names rust,vite,colyseus -c red,yellow,blue 'make watch' 'vite .' 'npm run colyseus-dev'"
     },
     "dependencies": {

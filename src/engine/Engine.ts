@@ -3,8 +3,11 @@ import Phaser from "phaser";
 import './engine.css';
 import Boot from "../scenes/Boot";
 import Arena from "../scenes/Arena";
+import Multiplayer from "./Multiplayer";
 
 export default class Engine extends Phaser.Game {
+    private readonly multiplayer: Multiplayer;
+
     public constructor() {
         super({
             type: Phaser.AUTO,
@@ -14,6 +17,8 @@ export default class Engine extends Phaser.Game {
             scene: new Boot,
             parent: document.getElementById("display") as HTMLCanvasElement,
         });
+
+        this.multiplayer = new Multiplayer;
 
         this.scene.add("Arena", new Arena);
     }
