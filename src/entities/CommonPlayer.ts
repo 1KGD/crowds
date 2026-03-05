@@ -31,7 +31,7 @@ export default abstract class CommonPlayer extends Phaser.GameObjects.Sprite {
     }
 
     private setupAnims(): void {
-        const walkAnim = (key: string, range: Phaser.Types.Animations.GenerateFrameNumbers): void => {
+        const walkAnim = (key: PlayerAnimations, range: Phaser.Types.Animations.GenerateFrameNumbers): void => {
             this.anims.create({
                 key,
                 frames: this.anims.generateFrameNumbers(ArenaAssets.PLAYER_SPRITESHEET, range),
