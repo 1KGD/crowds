@@ -9,8 +9,8 @@ const enum TestDummyAnims {
 }
 
 export default class TestDummy extends Boss<TestDummyState> {
-    public constructor(scene: Arena, x: number, y: number) {
-        super(scene, x, y, ArenaAssets.TEST_DUMMY_SPRITESHEET);
+    public constructor(scene: Arena) {
+        super(scene, 0, 0, ArenaAssets.TEST_DUMMY_SPRITESHEET);
 
         this.anims.play(TestDummyAnims.SLEEP);
 
@@ -35,5 +35,10 @@ export default class TestDummy extends Boss<TestDummyState> {
             frameRate: 5,
             repeat: -1
         });
+    }
+
+    public override onPosUpdate(pos: { x: number; y: number; }): void {
+        this.x = pos.x;
+        this.y = pos.y;
     }
 }

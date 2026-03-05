@@ -73,7 +73,7 @@ export default class Player extends CommonPlayer {
         if (dir.x !== this.networkData.controlsState.x || dir.y !== this.networkData.controlsState.y) this.scene.game.multiplayer.room?.send(Message.CONTROLS_UPDATE, dir);
     }
 
-    protected override onPosUpdate(pos: { x: number; y: number; }): void {
+    public override onPosUpdate(pos: { x: number; y: number; }): void {
         if (Math.abs(this.x - pos.x) > 4) this.x = pos.x;
         if (Math.abs(this.y - pos.y) > 4) this.y = pos.y;
     }

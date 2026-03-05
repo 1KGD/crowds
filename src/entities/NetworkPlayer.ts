@@ -14,7 +14,7 @@ export default class NetwokPlayer extends CommonPlayer {
         this.setupNetworkCallbacks();
     }
 
-    protected override onPosUpdate(pos: { x: number, y: number }): void {
+    public override onPosUpdate(pos: { x: number, y: number }): void {
         this.x = pos.x;
         this.y = pos.y;
     }

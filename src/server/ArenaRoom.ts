@@ -25,7 +25,7 @@ export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState<TestDum
         this.playerIntervals = {};
 
         this.clock.setInterval(() => {
-            this.state.boss.pos.x += 0.1;
+            this.state.boss.serverUpdate(1 / 20);
         }, 1 / 20);
     }
 

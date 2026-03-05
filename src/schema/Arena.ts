@@ -1,4 +1,5 @@
 import * as $ from '@colyseus/schema';
+import config from '../../config';
 
 class Vec2State extends $.Schema {
     @$.type('number') public x: number;
@@ -6,8 +7,13 @@ class Vec2State extends $.Schema {
 
     public constructor(x: number, y: number) {
         super();
+        this.set(x, y);
+    }
+
+    public set(x: number, y: number): this {
         this.x = x;
         this.y = y;
+        return this;
     }
 }
 
@@ -27,8 +33,8 @@ export class PlayerState extends $.Schema {
             this.pos.x += this.controlsState.x / dist * delta * 0.1;
             this.pos.y += this.controlsState.y / dist * delta * 0.1;
 
-            this.pos.x = Math.max(0, Math.min(this.pos.x, 256));
-            this.pos.y = Math.max(0, Math.min(this.pos.y, 256));
+            this.pos.x = Math.max(0, Math.min(this.pos.x, config.gameplay.arena.width));
+            this.pos.y = Math.max(0, Math.min(this.pos.y, config.gameplay.arena.height));
         }
     }
 }
@@ -37,16 +43,31 @@ export abstract class BossState extends $.Schema {
     @$.type(Vec2State) public readonly pos: Vec2State;
     @$.type("number") public health: number;
     @$.type("number") public readonly maxHealth: number;
+    @$.type("string") public anim: string;
 
     public constructor() {
         super();
         this.health = this.maxHealth;
         this.pos = new Vec2State(0, 0);
+        this.anim = "";
     }
+
+    public abstract serverUpdate(delta: number): void
 }
 
-export class TestDummyState extends BossState {
+export @$.entity class TestDummyState extends BossState {
     public override maxHealth: number = 100;
+
+    private time: number = 0;
+
+    public override serverUpdate(delta: number): void {
+        this.pos.set(
+            Math.sin(this.time) * 20 + config.gameplay.arena.width/2,
+            Math.cos(this.time) * 20 + config.gameplay.arena.height/2
+        );
+
+        this.time += delta;
+    }
 }
 
 export default class ArenaState<B extends BossState> extends $.Schema {

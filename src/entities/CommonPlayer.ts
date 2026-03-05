@@ -3,6 +3,7 @@ import * as Colyseus from '@colyseus/sdk';
 
 import Arena, { ArenaAssets } from '../scenes/Arena';
 import { PlayerState } from '../schema/Arena';
+import { ISyncedPos } from './ISyncedEntity';
 
 export const enum PlayerAnimations {
     WALK_DOWN = "walkDown",
@@ -11,7 +12,7 @@ export const enum PlayerAnimations {
     WALK_RIGHT = 'walkRight',
 }
 
-export default abstract class CommonPlayer extends Phaser.GameObjects.Sprite {
+export default abstract class CommonPlayer extends Phaser.GameObjects.Sprite implements ISyncedPos {
     public override scene: Arena;
 
     protected abstract get sessionId(): string;
@@ -46,5 +47,5 @@ export default abstract class CommonPlayer extends Phaser.GameObjects.Sprite {
         walkAnim(PlayerAnimations.WALK_RIGHT, { start: 17, end: 20 });
     }
 
-    protected abstract onPosUpdate(pos: { x: number, y: number }): void;
+    public abstract onPosUpdate(pos: { x: number, y: number }): void;
 }
