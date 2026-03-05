@@ -33,6 +33,28 @@ export class PlayerState extends $.Schema {
     }
 }
 
-export default class ArenaState extends $.Schema {
-    @$.type({ map: PlayerState }) public readonly players = new $.MapSchema<PlayerState>();
+export abstract class BossState extends $.Schema {
+    @$.type(Vec2State) public readonly pos: Vec2State;
+    @$.type("number") public health: number;
+    @$.type("number") public readonly maxHealth: number;
+
+    public constructor() {
+        super();
+        this.health = this.maxHealth;
+        this.pos = new Vec2State(0, 0);
+    }
+}
+
+export class TestDummyState extends BossState {
+    public override maxHealth: number = 100;
+}
+
+export default class ArenaState<B extends BossState> extends $.Schema {
+    @$.type({ map: PlayerState }) public readonly players = new $.MapSchema<PlayerState>;
+    @$.type(BossState) public readonly boss: B;
+
+    public constructor(boss: B) {
+        super();
+        this.boss = boss;
+    }
 }

@@ -4,12 +4,13 @@ import * as Colyseus from '@colyseus/sdk';
 
 import Engine from "../engine/Engine";
 import NetwokPlayer from "../entities/NetworkPlayer";
-import Boss from "../entities/Boss";
 import TestDummy from "../entities/TestDummy";
 
 import playerSpritesheetUrl from '../assets/player.png?url';
 import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import testDummyMusicUrl from '../assets/dummy.mp3?url';
+import { BossState } from "../schema/Arena";
+import Boss from "../entities/Boss";
 
 export const enum ArenaAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
@@ -19,7 +20,7 @@ export const enum ArenaAssets {
 
 export default class Arena extends Phaser.Scene {
     public player: Player;
-    public boss: Boss;
+    public boss: Boss<BossState>;
 
     public override game: Engine;
 

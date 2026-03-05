@@ -1,5 +1,5 @@
 import * as Colyseus from 'colyseus';
-import ArenaState, { PlayerState } from '../schema/Arena';
+import ArenaState, { PlayerState, TestDummyState } from '../schema/Arena';
 import { StateView } from '@colyseus/schema';
 
 type Client = Colyseus.Client<{
@@ -8,8 +8,8 @@ type Client = Colyseus.Client<{
     }
 }>
 
-export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState, client: Client }> {
-    public override state = new ArenaState();
+export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState<TestDummyState>, client: Client }> {
+    public override state = new ArenaState<TestDummyState>(new TestDummyState);
 
     private playerIntervals: { [key: string]: Colyseus.Delayed };
 
@@ -23,6 +23,10 @@ export default class ArenaRoom extends Colyseus.Room<{ state: ArenaState, client
 
     public override onCreate(options: {}): void {
         this.playerIntervals = {};
+
+        this.clock.setInterval(() => {
+            this.state.boss.pos.x += 0.1;
+        }, 1 / 20);
     }
 
     public override onJoin(client: Client, options?: {}, auth?: {}): void {

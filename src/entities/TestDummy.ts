@@ -1,4 +1,5 @@
 import Arena, { ArenaAssets } from "../scenes/Arena";
+import { TestDummyState } from "../schema/Arena";
 import Boss from "./Boss";
 
 const enum TestDummyAnims {
@@ -7,11 +8,13 @@ const enum TestDummyAnims {
     SLEEP = "sleep",
 }
 
-export default class TestDummy extends Boss {
+export default class TestDummy extends Boss<TestDummyState> {
     public constructor(scene: Arena, x: number, y: number) {
         super(scene, x, y, ArenaAssets.TEST_DUMMY_SPRITESHEET);
 
         this.anims.play(TestDummyAnims.SLEEP);
+
+        this.scene.sound.play(ArenaAssets.TEST_DUMMY_MUSIC);
     }
 
     protected override loadAnims(): void {
