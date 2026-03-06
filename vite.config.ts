@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import preloadPlugin from 'vite-preload/plugin';
-import config from './config';
+import wasm from 'vite-plugin-wasm';
 
 export default defineConfig({
     server: {
@@ -8,6 +8,7 @@ export default defineConfig({
         allowedHosts: true,
     },
     plugins: [
-        preloadPlugin()
+        preloadPlugin(),
+        wasm()
     ],
 });

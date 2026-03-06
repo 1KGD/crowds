@@ -1,4 +1,5 @@
 import * as wasm from 'wasm-backend';
+import * as bg from 'wasm-backend/backend_bg.wasm';
 
 import Phaser from "phaser";
 
@@ -8,7 +9,7 @@ import Arena from "../scenes/Arena";
 import config from "../../config";
 
 export default class Engine extends Phaser.Game {
-    public readonly backend: wasm.Game;
+    public readonly backend: wasm.World;
 
     public constructor() {
         super({
@@ -22,9 +23,11 @@ export default class Engine extends Phaser.Game {
         this.scene.add("Boot", new Boot);
         this.scene.add("Arena", new Arena);
 
-        this.backend = wasm.Game.new();
+        this.backend = wasm.World.new(256, 256);
 
-        console.log(this.backend.world.get_name());
+        console.log(bg.memory);
+
+        document.getElementById("debug").innerText = this.backend.render();
 
         this.launch();
     }

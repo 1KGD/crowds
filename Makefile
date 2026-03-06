@@ -1,8 +1,8 @@
 build:
-	wasm-pack build --target web
+	wasm-pack build
 
 watch:
-	cargo watch -- make build
+	cargo-watch -- make build
 
 install:
 	cargo install wasm-pack
