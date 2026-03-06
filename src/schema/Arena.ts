@@ -42,11 +42,12 @@ export class PlayerState extends $.Schema {
 export abstract class BossState extends $.Schema {
     @$.type(Vec2State) public readonly pos: Vec2State;
     @$.type("number") public health: number;
-    @$.type("number") public readonly maxHealth: number;
+    @$.type("number") public maxHealth: number;
     @$.type("string") public anim: string;
 
-    public constructor() {
+    protected constructor(maxHealth: number) {
         super();
+        this.maxHealth = maxHealth;
         this.health = this.maxHealth;
         this.pos = new Vec2State(0, 0);
         this.anim = "";
@@ -55,10 +56,12 @@ export abstract class BossState extends $.Schema {
     public abstract serverUpdate(delta: number): void
 }
 
-export @$.entity class TestDummyState extends BossState {
-    public override maxHealth: number = 100;
-
+export @$.entity class TestDummyState extends BossState {\
     private time: number = 0;
+
+    public constructor() {
+        super(100)
+    }
 
     public override serverUpdate(delta: number): void {
         this.pos.set(
