@@ -1,5 +1,4 @@
 use noise_perlin::*;
-use std::fmt;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -64,21 +63,11 @@ impl World {
         Tile::Stone
     }
 
-    pub fn render(&self) -> String {
-        self.to_string()
+    pub fn tiles(&self) -> *const Tile {
+        self.tiles.as_ptr()
     }
-}
 
-impl fmt::Display for World {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for line in self.tiles.as_slice().chunks(self.shape.x as usize) {
-            for &tile in line {
-                let symbol = if tile == Tile::Air { '◻' } else { '◼' };
-                write!(f, "{}", symbol)?;
-            }
-            write!(f, "\n")?;
-        }
-
-        Ok(())
+    pub fn size(&self) -> u32 {
+        (self.shape.x * self.shape.y) as u32
     }
 }

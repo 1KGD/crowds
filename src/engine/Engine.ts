@@ -16,6 +16,7 @@ export default class Engine extends Phaser.Game {
             type: Phaser.AUTO,
             pixelArt: true,
             width: config.display.width,
+            clearBeforeRender: false,
             height: config.display.height,
             parent: document.getElementById("display") as HTMLCanvasElement,
         });
@@ -23,13 +24,15 @@ export default class Engine extends Phaser.Game {
         this.scene.add("Boot", new Boot);
         this.scene.add("Arena", new Arena);
 
-        this.backend = wasm.World.new(256, 256);
+        this.backend = wasm.World.new(1e3, 1e3);
 
-        console.log(bg.memory);
-
-        document.getElementById("debug").innerText = this.backend.render();
+        console.log(this.tileBuffer);
 
         this.launch();
+    }
+
+    public get tileBuffer(): Uint8Array {
+        return new Uint8Array(bg.memory.buffer, this.backend.tiles(), this.backend.size());
     }
 
     private launch(): void {
