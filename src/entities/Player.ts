@@ -17,6 +17,8 @@ const enum PlayerAnimations {
 }
 
 export default class Player extends Phaser.GameObjects.Sprite {
+    public override scene: World;
+
     private readonly keys: { [key in PlayerControls]: Phaser.Input.Keyboard.Key };
 
     public constructor(scene: World, x: number, y: number) {
@@ -66,8 +68,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.x += normalized.x * delta * 0.1;
             this.y += normalized.y * delta * 0.1;
 
-            this.x = Phaser.Math.Clamp(this.x, this.width / 2, this.scene.scale.width - this.width / 2);
-            this.y = Phaser.Math.Clamp(this.y, this.height / 3, this.scene.scale.height - this.height / 3);
+            this.x = Phaser.Math.Clamp(this.x, this.width / 2, this.scene.pixelWidth - this.width / 2);
+            this.y = Phaser.Math.Clamp(this.y, this.height / 3, this.scene.pixelHeight - this.height / 3);
+            this.scene.cameras.main.centerOn(this.x, this.y);
 
             let anim;
             if (dir.x !== 0) anim = dir.x < 0 ? PlayerAnimations.WALK_LEFT : PlayerAnimations.WALK_RIGHT;

@@ -9,6 +9,7 @@ import Engine from "../engine/Engine";
 import playerSpritesheetUrl from '../assets/player.png?url';
 import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import tilemapUrl from '../assets/tilemap.png?url';
+import config from '../../config';
 
 export const enum WorldAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
@@ -46,7 +47,7 @@ export default class World extends Phaser.Scene {
         this.add.existing(this.player);
 
         this.tileImage = this.make.image({ key: WorldAssets.TILEMAP, origin: 0 });
-        
+
         this.cameras.main.dirty = true;
         this.events.on('prerender', () => this.prerender());
     }
@@ -70,26 +71,32 @@ export default class World extends Phaser.Scene {
         return new Uint8Array(wasmBG.memory.buffer, this.backend.tilesPtr, this.backend.width * this.backend.height);
     }
 
-    /* Kudos to https://phaser.io/sandbox/iueb1Von for this */
+    public get pixelWidth(): number {
+        return config.tileset.tileWidth * this.backend.width;
+    }
+
+    public get pixelHeight(): number {
+        return config.tileset.tileHeight * this.backend.height;
+    }
+
     public prerender(): void {
         if (this.cameras.main.dirty) {
             this.drawMap();
         }
     }
 
+    /* Kudos to https://phaser.io/sandbox/iueb1Von for this */
     private drawMap(): void {
         this.cameras.main.preRender();
         const width = this.backend.width;
         const height = this.backend.height;
         const tileBuffer = this.tileBuffer;
-        const tilewidth = 16;
-        const tileheight = 16;
 
         const { scrollX, scrollY, worldView } = this.cameras.main;
-        const xMin = Math.max(0, Math.floor(worldView.left / tilewidth));
-        const xMax = Math.min(width - 1, Math.ceil(worldView.right / tilewidth));
-        const yMin = Math.max(0, Math.floor(worldView.top / tileheight));
-        const yMax = Math.min(height - 1, Math.ceil(worldView.bottom / tileheight));
+        const xMin = Math.max(0, Math.floor(worldView.left / config.tileset.tileWidth));
+        const xMax = Math.min(width - 1, Math.ceil(worldView.right / config.tileset.tileWidth));
+        const yMin = Math.max(0, Math.floor(worldView.top / config.tileset.tileHeight));
+        const yMax = Math.min(height - 1, Math.ceil(worldView.bottom / config.tileset.tileHeight));
 
         let tilesDrawn = 0;
 
@@ -103,9 +110,9 @@ export default class World extends Phaser.Scene {
 
                 if (!tile || tile < 1) continue;
 
-                this.tileImage.x = x * tilewidth;
-                this.tileImage.y = y * tileheight;
-                this.tileImage.setFrame(tile, false, false);
+                this.tileImage.x = x * config.tileset.tileWidth;
+                this.tileImage.y = y * config.tileset.tileHeight;
+                this.tileImage.setFrame(tile - 1, false, false);
 
                 this.rtx.batchDraw(this.tileImage);
 
