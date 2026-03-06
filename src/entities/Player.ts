@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-import Arena, { ArenaAssets } from "../scenes/Arena";
+import World, { WorldAssets } from "../scenes/World";
 
 const enum PlayerControls {
     DOWN = 'down',
@@ -19,8 +19,8 @@ const enum PlayerAnimations {
 export default class Player extends Phaser.GameObjects.Sprite {
     private readonly keys: { [key in PlayerControls]: Phaser.Input.Keyboard.Key };
 
-    public constructor(scene: Arena, x: number, y: number) {
-        super(scene, x, y, ArenaAssets.PLAYER_SPRITESHEET);
+    public constructor(scene: World, x: number, y: number) {
+        super(scene, x, y, WorldAssets.PLAYER_SPRITESHEET);
         this.keys = this.setupControls();
         this.setupAnims();
     }
@@ -29,7 +29,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         const walkAnim = (key: PlayerAnimations, range: Phaser.Types.Animations.GenerateFrameNumbers): void => {
             this.anims.create({
                 key,
-                frames: this.anims.generateFrameNumbers(ArenaAssets.PLAYER_SPRITESHEET, range),
+                frames: this.anims.generateFrameNumbers(WorldAssets.PLAYER_SPRITESHEET, range),
                 frameRate: 10,
                 repeat: -1
             });

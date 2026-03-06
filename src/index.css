@@ -12,6 +12,5 @@ html, body {
     height: 100vh;
 
     overflow: scroll;
-
-    font-size: 3px;
+    color: red;
 }

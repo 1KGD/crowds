@@ -39,6 +39,7 @@ pub struct World {
 
 #[wasm_bindgen]
 impl World {
+    #[wasm_bindgen(constructor)]
     pub fn new(width: u32, height: u32) -> World {
         let shape: Vec2 = vec2(width as i32, height as i32);
         let size: u32 = width * height;
@@ -52,7 +53,7 @@ impl World {
         World { shape, tiles }
     }
 
-    pub fn gen_tile_at_pos(pos: Vec2, shape: Vec2) -> Tile {
+    fn gen_tile_at_pos(pos: Vec2, shape: Vec2) -> Tile {
         if perlin_2d(
             pos.x_f32() / shape.x_f32() * 6.,
             pos.y_f32() / shape.y_f32() * 6.,
@@ -63,11 +64,18 @@ impl World {
         Tile::Stone
     }
 
-    pub fn tiles(&self) -> *const Tile {
+    #[wasm_bindgen(js_name = tilesPtr, getter)]
+    pub fn tiles_ptr(&self) -> *const Tile {
         self.tiles.as_ptr()
     }
 
-    pub fn size(&self) -> u32 {
-        (self.shape.x * self.shape.y) as u32
+    #[wasm_bindgen(getter)]
+    pub fn width(&self) -> u32 {
+        self.shape.x as u32
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn height(&self) -> u32 {
+        self.shape.y as u32
     }
 }
