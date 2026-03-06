@@ -1,7 +1,7 @@
 export default {
     display: {
-        width: 256,
-        height: 256
+        width: 512,
+        height: 320
     },
     tileset: {
         tileWidth: 16,

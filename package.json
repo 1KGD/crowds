@@ -20,6 +20,7 @@
     "dependencies": {
         "@eslint/js": "^10.0.1",
         "phaser": "^3.90.0",
+        "stats-gl": "^4.1.0",
         "vite-preload": "^1.0.5",
         "wasm-backend": "file:./pkg"
     },

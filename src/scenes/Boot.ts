@@ -1,4 +1,4 @@
-import Phaser, { Scenes } from "phaser";
+import Phaser from "phaser";
 import { GameScenes } from "../engine/Engine";
 
 export default class Boot extends Phaser.Scene {
@@ -7,6 +7,6 @@ export default class Boot extends Phaser.Scene {
     }
 
     public create(): void {
-        this.scene.start(GameScenes.WORLD);
+        this.game.scene.start(GameScenes.WORLD);
     }
 }

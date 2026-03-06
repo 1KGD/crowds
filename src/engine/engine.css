@@ -2,6 +2,11 @@
     width: 100%;
     height: 100%;
 
+    aspect-ratio: 20;
+
+    max-width: 100vw;
+    max-height: 100vh;
+
     background: linear-gradient(0deg, darkblue 20%, cyan 100%);
 
     display: flex;

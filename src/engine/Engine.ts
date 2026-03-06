@@ -1,5 +1,4 @@
-import * as wasm from 'wasm-backend';
-import * as bg from 'wasm-backend/backend_bg.wasm';
+import Stats from 'stats-gl';
 
 import Phaser from "phaser";
 
@@ -17,6 +16,10 @@ export default class Engine extends Phaser.Game {
     public constructor() {
         super({
             type: Phaser.AUTO,
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH
+            },
             pixelArt: true,
             width: config.display.width,
             clearBeforeRender: false,
@@ -26,10 +29,15 @@ export default class Engine extends Phaser.Game {
 
         this.scene.add(GameScenes.BOOT, new Boot);
         this.scene.add(GameScenes.WORLD, new World);
+
         this.launch();
     };
 
     private launch(): void {
         this.scene.start(GameScenes.BOOT);
+        const stats = new Stats({ trackGPU: true });
+        document.body.appendChild(stats.domElement);
+        this.events.on("prestep", () => stats.begin());
+        this.events.on("postrender", () => { stats.end(); stats.update(); });
     }
 }
