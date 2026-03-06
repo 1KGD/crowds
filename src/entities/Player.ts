@@ -1,10 +1,6 @@
 import Phaser from "phaser";
-import * as Colyseus from '@colyseus/sdk';
 
 import Arena, { ArenaAssets } from "../scenes/Arena";
-import Message from "../schema/messages";
-import { PlayerState } from "../schema/Arena";
-import CommonPlayer, { PlayerAnimations } from "./CommonPlayer";
 
 const enum PlayerControls {
     DOWN = 'down',
@@ -13,20 +9,36 @@ const enum PlayerControls {
     RIGHT = 'right',
 }
 
-export default class Player extends CommonPlayer {
-    private readonly keys: { [key in PlayerControls]: Phaser.Input.Keyboard.Key };
-    private get networkData(): PlayerState {
-        return this.scene.game.multiplayer.room.state.players.get(this.scene.game.multiplayer.room.sessionId);
-    }
+const enum PlayerAnimations {
+    WALK_DOWN = "walkDown",
+    WALK_UP = 'walkUp',
+    WALK_LEFT = 'walkLeft',
+    WALK_RIGHT = 'walkRight',
+}
 
-    protected get sessionId(): string {
-        return this.scene.game.multiplayer.room.sessionId;
-    }
+export default class Player extends Phaser.GameObjects.Sprite {
+    private readonly keys: { [key in PlayerControls]: Phaser.Input.Keyboard.Key };
 
     public constructor(scene: Arena, x: number, y: number) {
-        super(scene, x, y);
+        super(scene, x, y, ArenaAssets.PLAYER_SPRITESHEET);
         this.keys = this.setupControls();
-        this.setupNetworkCallbacks();
+        this.setupAnims();
+    }
+
+    private setupAnims(): void {
+        const walkAnim = (key: PlayerAnimations, range: Phaser.Types.Animations.GenerateFrameNumbers): void => {
+            this.anims.create({
+                key,
+                frames: this.anims.generateFrameNumbers(ArenaAssets.PLAYER_SPRITESHEET, range),
+                frameRate: 10,
+                repeat: -1
+            });
+        };;
+
+        walkAnim(PlayerAnimations.WALK_DOWN, { start: 0, end: 3 });
+        walkAnim(PlayerAnimations.WALK_UP, { start: 34, end: 37 });
+        walkAnim(PlayerAnimations.WALK_LEFT, { start: 51, end: 54 });
+        walkAnim(PlayerAnimations.WALK_RIGHT, { start: 17, end: 20 });
     }
 
     private setupControls(): { [key in PlayerControls]: Phaser.Input.Keyboard.Key } {
@@ -36,10 +48,7 @@ export default class Player extends CommonPlayer {
             left: Phaser.Input.Keyboard.KeyCodes.LEFT,
             right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
         };
-
-        const keys = this.scene.input.keyboard?.addKeys(controlMap) as { [key in PlayerControls]: Phaser.Input.Keyboard.Key };
-
-        return keys;
+        return this.scene.input.keyboard?.addKeys(controlMap) as { [key in PlayerControls]: Phaser.Input.Keyboard.Key };
     }
 
     public override preUpdate(time: number, delta: number): void {
@@ -69,12 +78,5 @@ export default class Player extends CommonPlayer {
             this.anims.restart();
             this.stop();
         }
-
-        if (dir.x !== this.networkData.controlsState.x || dir.y !== this.networkData.controlsState.y) this.scene.game.multiplayer.room?.send(Message.CONTROLS_UPDATE, dir);
-    }
-
-    public override onPosUpdate(pos: { x: number; y: number; }): void {
-        if (Math.abs(this.x - pos.x) > 4) this.x = pos.x;
-        if (Math.abs(this.y - pos.y) > 4) this.y = pos.y;
     }
 }

@@ -15,23 +15,17 @@
     "type": "module",
     "main": "index.html",
     "scripts": {
-        "colyseus-dev": "tsx --watch src/server/index.ts",
-        "dev": "concurrently --kill-others --names rust,vite,colyseus -c red,yellow,blue 'make watch' 'vite .' 'npm run colyseus-dev'"
+        "dev": "concurrently --kill-others --names rust,vite -c red,yellow 'make watch' 'vite .'"
     },
     "dependencies": {
-        "@colyseus/sdk": "^0.17.34",
         "@eslint/js": "^10.0.1",
-        "colyseus": "^0.17.8",
-        "express": "^5.2.1",
         "phaser": "^3.90.0",
         "vite-preload": "^1.0.5",
-        "wasm-utils": "file:./pkg"
+        "wasm-backend": "file:./pkg"
     },
     "devDependencies": {
-        "@types/express": "^5.0.6",
         "concurrently": "^9.2.1",
         "eslint": "^10.0.2",
-        "tsx": "^4.21.0",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.56.1",
         "vite": "^7.3.1",

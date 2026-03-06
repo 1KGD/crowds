@@ -1,4 +1,4 @@
-import * as wasm from 'wasm-utils';
+import * as wasm from 'wasm-backend';
 import Phaser from 'phaser';
 
 import './index.css';
