@@ -6,18 +6,6 @@ export default defineConfig({
     server: {
         watch: { usePolling: false },
         allowedHosts: true,
-        proxy: {
-            '^/api/matchmake/.*': {
-                target: `http://localhost:${config.multiplayer.port}/matchmake/`,
-                changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/api\/matchmake/, ''),
-            },
-            '/api': {
-                target: 'ws://localhost:2567',
-                ws: true,
-                rewriteWsOrigin: true,
-            },
-        }
     },
     plugins: [
         preloadPlugin()

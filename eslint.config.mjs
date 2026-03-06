@@ -24,7 +24,7 @@ export default defineConfig(
             "@typescript-eslint/no-unsafe-call": "off",
             "@typescript-eslint/no-unsafe-assignment": "off", // Just plain annoying
             "@typescript-eslint/no-empty-object-type": "off",
-            "@eslint/no-unsafe-member-access": "off",
+            "@typescript-eslint/no-unsafe-member-access": "off",
         }
     }
 );
