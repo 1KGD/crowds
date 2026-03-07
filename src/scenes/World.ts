@@ -37,7 +37,7 @@ export default class World extends Phaser.Scene {
     }
 
     public create(): void {
-        this.backend = new wasm.World(256, 256);
+        this.backend = new wasm.World(config.world.width, config.world.height);
 
         this.rtx = new Phaser.GameObjects.RenderTexture(this, 0, 0, this.scale.width, this.scale.height, true);
         this.rtx.setOrigin(0, 0).setScrollFactor(0, 0);
@@ -67,8 +67,12 @@ export default class World extends Phaser.Scene {
         });
     }
 
-    private get tileBuffer(): Uint8Array {
-        return new Uint8Array(wasmBG.memory.buffer, this.backend.tilesPtr, this.backend.width * this.backend.height);
+    private get surfaceBuffer(): Uint16Array {
+        return new Uint16Array(wasmBG.memory.buffer, this.backend.surfacePtr, this.backend.width * this.backend.height);
+    }
+
+    private get terrainBuffer(): Uint16Array {
+        return new Uint16Array(wasmBG.memory.buffer, this.backend.terrainPtr, this.backend.width * this.backend.height);
     }
 
     public get pixelWidth(): number {
@@ -90,7 +94,7 @@ export default class World extends Phaser.Scene {
         this.cameras.main.preRender();
         const width = this.backend.width;
         const height = this.backend.height;
-        const tileBuffer = this.tileBuffer;
+        const layers = [this.surfaceBuffer, this.terrainBuffer];
 
         const { scrollX, scrollY, worldView } = this.cameras.main;
         const xMin = Math.max(0, Math.floor(worldView.left / config.tileset.tileWidth));
@@ -104,23 +108,25 @@ export default class World extends Phaser.Scene {
 
         this.rtx.clear().beginDraw();
 
-        for (let x = xMin; x <= xMax; x++) {
-            for (let y = yMin; y <= yMax; y++) {
-                const tile = tileBuffer[y * width + x];
+        for (const layer of layers) {
+            for (let x = xMin; x <= xMax; x++) {
+                for (let y = yMin; y <= yMax; y++) {
+                    const tile = layer[y * width + x];
 
-                if (!tile || tile < 1) continue;
+                    if (!tile || tile < 1) continue;
 
-                this.tileImage.x = x * config.tileset.tileWidth;
-                this.tileImage.y = y * config.tileset.tileHeight;
-                this.tileImage.setFrame(tile - 1, false, false);
+                    this.tileImage.x = x * config.tileset.tileWidth;
+                    this.tileImage.y = y * config.tileset.tileHeight;
+                    this.tileImage.setFrame(tile - 1, false, false);
 
-                this.rtx.batchDraw(this.tileImage);
+                    this.rtx.batchDraw(this.tileImage);
 
-                tilesDrawn++;
+                    tilesDrawn++;
+                }
             }
         }
 
-        document.getElementById("debug").innerText = `frame ${this.game.loop.frame} | ${tilesDrawn}/${tileBuffer.length} tiles | view x=${worldView.x} y=${worldView.y} w=${worldView.width} h=${worldView.height} | bounds min=(${xMin} ${yMin}) max=(${xMax} ${yMax}) size=(${xMax - xMin + 1} ${yMax - yMin + 1})`;
+        document.getElementById("debug").innerText = `frame ${this.game.loop.frame} view x=${worldView.x} y=${worldView.y} w=${worldView.width} h=${worldView.height} | bounds min=(${xMin} ${yMin}) max=(${xMax} ${yMax}) size=(${xMax - xMin + 1} ${yMax - yMin + 1})`;
 
         this.rtx.endDraw();
     }
