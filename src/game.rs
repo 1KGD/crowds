@@ -22,7 +22,7 @@ pub enum Tile {
     Lillypad2 = 5,
 
     Water = 284,
-    WaterRipples = 164,
+    WaterRipples = 124,
 
     TallGrass = 408,
 }
