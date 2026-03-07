@@ -1,11 +1,10 @@
 use crate::util::*;
-use noise_perlin::*;
+use noise::*;
 use wasm_bindgen::prelude::*;
 
 const WORLD_SCALE: f32 = 96.;
 
-const SURFACE_NOISE_SEED: f32 = 0.6;
-const TERRAIN_NOISE_SEED: f32 = 0.2;
+const SEED: u32 = 0;
 
 #[wasm_bindgen]
 #[repr(u16)]
@@ -16,6 +15,8 @@ pub enum Tile {
 
     Sprout = 2,
     Flowerpot = 36,
+
+    Rock = 284,
 
     TallGrass = 408,
 }
@@ -34,12 +35,18 @@ impl World {
         let shape: Vec2 = vec2(width as i32, height as i32);
         let size: u32 = width * height;
 
+        let mut noise = SuperSimplex::new(SEED);
+
+        noise.set_seed(1);
         let surface = (0..size)
             .map(|i: u32| Self::surface_gen(vec2((i % width) as i32, (i / width) as i32), shape))
             .collect();
 
+        noise.set_seed(2);
         let terrain = (0..size)
-            .map(|i: u32| Self::terrain_gen(vec2((i % width) as i32, (i / width) as i32), shape))
+            .map(|i: u32| {
+                Self::terrain_gen(vec2((i % width) as i32, (i / width) as i32), &mut noise)
+            })
             .collect();
 
         World {
@@ -50,25 +57,13 @@ impl World {
     }
 
     fn surface_gen(pos: Vec2, shape: Vec2) -> Tile {
-        let height = perlin_3d(
-            pos.x_f32() / shape.x_f32() * WORLD_SCALE,
-            pos.y_f32() / shape.y_f32() * WORLD_SCALE,
-            SURFACE_NOISE_SEED,
-        );
-        if height >= 0.3 {
-            return Tile::TallGrass;
-        }
         Tile::Grass
     }
 
-    fn terrain_gen(pos: Vec2, shape: Vec2) -> Tile {
-        let height = perlin_3d(
-            pos.x_f32() / shape.x_f32() * WORLD_SCALE,
-            pos.y_f32() / shape.y_f32() * WORLD_SCALE,
-            TERRAIN_NOISE_SEED,
-        );
+    fn terrain_gen(pos: Vec2, noise: &mut SuperSimplex) -> Tile {
+        let height: f64 = noise.get([(pos.x_f32() / 32.) as f64, (pos.y_f32() / 32.) as f64]);
         if height >= 0.4 {
-            return Tile::Flowerpot;
+            return Tile::Rock;
         }
         Tile::Air
     }

@@ -43,7 +43,7 @@ export default class World extends Phaser.Scene {
         this.rtx.setOrigin(0, 0).setScrollFactor(0, 0);
         this.add.existing(this.rtx);
 
-        this.player = new Player(this, config.world.width / 2, config.world.height / 2);
+        this.player = new Player(this, this.pixelWidth / 2, this.pixelHeight / 2);
         this.add.existing(this.player);
 
         this.tileImage = this.make.image({ key: WorldAssets.TILEMAP, origin: 0, visible: false });

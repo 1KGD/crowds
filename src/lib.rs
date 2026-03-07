@@ -1,5 +1,6 @@
-extern crate noise_perlin;
+extern crate noise;
 extern crate wasm_bindgen;
+extern crate rand;
 
 mod game;
 mod util;
