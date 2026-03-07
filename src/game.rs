@@ -16,7 +16,7 @@ pub enum Tile {
     Sprout = 2,
     Flowerpot = 36,
 
-    Rock = 284,
+    Water = 284,
 
     TallGrass = 408,
 }
@@ -39,7 +39,9 @@ impl World {
 
         noise.set_seed(1);
         let surface = (0..size)
-            .map(|i: u32| Self::surface_gen(vec2((i % width) as i32, (i / width) as i32), shape))
+            .map(|i: u32| {
+                Self::surface_gen(vec2((i % width) as i32, (i / width) as i32), &mut noise)
+            })
             .collect();
 
         noise.set_seed(2);
@@ -56,15 +58,15 @@ impl World {
         }
     }
 
-    fn surface_gen(pos: Vec2, shape: Vec2) -> Tile {
+    fn surface_gen(pos: Vec2, noise: &mut SuperSimplex) -> Tile {
+        let height: f64 = noise.get([(pos.x_f32() / WORLD_SCALE) as f64, (pos.y_f32() / WORLD_SCALE) as f64]);
+        if height <= -0.41 {
+            return Tile::Water;
+        }
         Tile::Grass
     }
 
     fn terrain_gen(pos: Vec2, noise: &mut SuperSimplex) -> Tile {
-        let height: f64 = noise.get([(pos.x_f32() / 32.) as f64, (pos.y_f32() / 32.) as f64]);
-        if height >= 0.4 {
-            return Tile::Rock;
-        }
         Tile::Air
     }
 
