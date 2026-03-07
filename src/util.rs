@@ -15,6 +15,10 @@ impl Vec2 {
     pub fn y_f32(&self) -> f32 {
         self.y as f32
     }
+
+    pub fn to_index(&self, width: u32) -> usize {
+        self.x as usize + self.y as usize * width as usize
+    }
 }
 
 #[wasm_bindgen]
