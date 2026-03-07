@@ -46,7 +46,7 @@ export default class World extends Phaser.Scene {
         this.player = new Player(this, config.world.width / 2, config.world.height / 2);
         this.add.existing(this.player);
 
-        this.tileImage = this.make.image({ key: WorldAssets.TILEMAP, origin: 0 });
+        this.tileImage = this.make.image({ key: WorldAssets.TILEMAP, origin: 0, visible: false });
 
         this.cameras.main.dirty = true;
         this.events.on('prerender', () => this.prerender());
@@ -106,8 +106,6 @@ export default class World extends Phaser.Scene {
 
         this.rtx.clear().beginDraw();
 
-        this.tileImage.setVisible(true);
-
         for (const layer of layers) {
             for (let x = xMin; x <= xMax; x++) {
                 for (let y = yMin; y <= yMax; y++) {
@@ -122,8 +120,6 @@ export default class World extends Phaser.Scene {
                 }
             }
         }
-
-        this.tileImage.setVisible(false);
 
         document.getElementById("debug").innerText = `frame ${this.game.loop.frame} view x=${worldView.x} y=${worldView.y} w=${worldView.width} h=${worldView.height} | bounds min=(${xMin} ${yMin}) max=(${xMax} ${yMax}) size=(${xMax - xMin + 1} ${yMax - yMin + 1})`;
 
