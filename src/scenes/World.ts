@@ -43,7 +43,7 @@ export default class World extends Phaser.Scene {
         this.rtx.setOrigin(0, 0).setScrollFactor(0, 0);
         this.add.existing(this.rtx);
 
-        this.player = new Player(this, 0, 0);
+        this.player = new Player(this, config.world.width / 2, config.world.height / 2);
         this.add.existing(this.player);
 
         this.tileImage = this.make.image({ key: WorldAssets.TILEMAP, origin: 0 });
@@ -102,11 +102,11 @@ export default class World extends Phaser.Scene {
         const yMin = Math.max(0, Math.floor(worldView.top / config.tileset.tileHeight));
         const yMax = Math.min(height - 1, Math.ceil(worldView.bottom / config.tileset.tileHeight));
 
-        let tilesDrawn = 0;
-
         this.rtx.camera.setScroll(scrollX, scrollY);
 
         this.rtx.clear().beginDraw();
+
+        this.tileImage.setVisible(true);
 
         for (const layer of layers) {
             for (let x = xMin; x <= xMax; x++) {
@@ -118,13 +118,12 @@ export default class World extends Phaser.Scene {
                     this.tileImage.x = x * config.tileset.tileWidth;
                     this.tileImage.y = y * config.tileset.tileHeight;
                     this.tileImage.setFrame(tile - 1, false, false);
-
                     this.rtx.batchDraw(this.tileImage);
-
-                    tilesDrawn++;
                 }
             }
         }
+
+        this.tileImage.setVisible(false);
 
         document.getElementById("debug").innerText = `frame ${this.game.loop.frame} view x=${worldView.x} y=${worldView.y} w=${worldView.width} h=${worldView.height} | bounds min=(${xMin} ${yMin}) max=(${xMax} ${yMax}) size=(${xMax - xMin + 1} ${yMax - yMin + 1})`;
 

@@ -1,3 +1,4 @@
+use crate::util::*;
 use noise_perlin::*;
 use wasm_bindgen::prelude::*;
 
@@ -7,28 +8,6 @@ const SURFACE_NOISE_SEED: f32 = 0.6;
 const TERRAIN_NOISE_SEED: f32 = 0.2;
 
 #[wasm_bindgen]
-#[derive(Clone, Copy)]
-pub struct Vec2 {
-    x: i32,
-    y: i32,
-}
-
-impl Vec2 {
-    pub fn x_f32(&self) -> f32 {
-        self.x as f32
-    }
-
-    pub fn y_f32(&self) -> f32 {
-        self.y as f32
-    }
-}
-
-#[wasm_bindgen]
-pub fn vec2(x: i32, y: i32) -> Vec2 {
-    Vec2 { x, y }
-}
-
-#[wasm_bindgen]
 #[repr(u16)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Tile {
@@ -36,6 +15,7 @@ pub enum Tile {
     Grass = 1,
 
     Sprout = 2,
+    Flowerpot = 36,
 
     TallGrass = 408,
 }
@@ -88,7 +68,7 @@ impl World {
             TERRAIN_NOISE_SEED,
         );
         if height >= 0.4 {
-            return Tile::Sprout;
+            return Tile::Flowerpot;
         }
         Tile::Air
     }
