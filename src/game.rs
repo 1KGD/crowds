@@ -1,5 +1,6 @@
 use crate::util::*;
 use noise::*;
+use rand::prelude::*;
 use wasm_bindgen::prelude::*;
 
 const WORLD_SCALE: f32 = 96.;
@@ -17,15 +18,20 @@ pub enum Tile {
     Flowerpot = 36,
 
     Lillypad0 = 3,
+    Lillypad1 = 4,
+    Lillypad2 = 5,
 
     Water = 284,
+    WaterRipples = 164,
 
     TallGrass = 408,
 }
 
 impl Tile {
-    pub fn lilypad() -> Tile {
-        Tile::Lillypad0
+    pub fn lilypad(mut rng: &mut dyn Rng) -> Tile {
+        return *[Tile::Lillypad0, Tile::Lillypad1, Tile::Lillypad2]
+            .choose(&mut rng)
+            .unwrap();
     }
 }
 
@@ -43,22 +49,29 @@ impl World {
         let shape: Vec2 = vec2(width as i32, height as i32);
         let size: u32 = width * height;
 
-        let mut noise = Simplex::new(SEED);
+        let mut rng = rand::rng();
 
-        noise.set_seed(1);
+        let surface_noise = Simplex::new(rng.next_u32());
+
         let surface = (0..size)
             .map(|i: u32| {
-                Self::surface_gen(vec2((i % width) as i32, (i / width) as i32), &noise)
+                Self::surface_gen(
+                    vec2((i % width) as i32, (i / width) as i32),
+                    &surface_noise,
+                    &mut rng,
+                )
             })
             .collect();
 
-        noise.set_seed(200);
+        let terrain_noise = Simplex::new(rng.next_u32());
+
         let terrain = (0..size)
             .map(|i: u32| {
                 Self::terrain_gen(
                     vec2((i % width) as i32, (i / width) as i32),
                     shape.x as u32,
-                    &noise,
+                    &terrain_noise,
+                    &mut rng,
                     &surface,
                 )
             })
@@ -71,25 +84,34 @@ impl World {
         }
     }
 
-    fn surface_gen(pos: Vec2, noise: &Simplex) -> Tile {
+    fn surface_gen(pos: Vec2, noise: &Simplex, mut rng: &mut dyn Rng) -> Tile {
         let height: f64 = noise.get([
             (pos.x_f32() / WORLD_SCALE) as f64,
             (pos.y_f32() / WORLD_SCALE) as f64,
         ]);
         if height <= -0.41 {
+            if rng.random::<f32>() > 0.99 {
+                return Tile::WaterRipples;
+            }
             return Tile::Water;
         }
         Tile::Grass
     }
 
-    fn terrain_gen(pos: Vec2, width: u32, noise: &Simplex, surface: &Vec<Tile>) -> Tile {
+    fn terrain_gen(
+        pos: Vec2,
+        width: u32,
+        noise: &Simplex,
+        mut rng: &mut dyn Rng,
+        surface: &Vec<Tile>,
+    ) -> Tile {
         if *surface.get(pos.to_index(width)).unwrap() == Tile::Water {
             if noise.get([
-                (pos.x_f32() / WORLD_SCALE) as f64,
-                (pos.y_f32() / WORLD_SCALE) as f64,
-            ]) <= 0.
+                (pos.x_f32() / WORLD_SCALE * 16.) as f64,
+                (pos.y_f32() / WORLD_SCALE * 16.) as f64,
+            ]) <= -0.48
             {
-                return Tile::lilypad();
+                return Tile::lilypad(&mut rng);
             }
         }
         Tile::Air

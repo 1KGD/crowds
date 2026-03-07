@@ -10,6 +10,7 @@ import playerSpritesheetUrl from '../assets/player.png?url';
 import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import tilemapUrl from '../assets/tilemap.png?url';
 import config from '../../config';
+import animatedTiles from './animatedTiles';
 
 export const enum WorldAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
@@ -84,9 +85,7 @@ export default class World extends Phaser.Scene {
     }
 
     public prerender(): void {
-        if (this.cameras.main.dirty) {
-            this.drawMap();
-        }
+        this.drawMap();
     }
 
     /* Kudos to https://phaser.io/sandbox/iueb1Von for this */
@@ -109,9 +108,14 @@ export default class World extends Phaser.Scene {
         for (const layer of layers) {
             for (let x = xMin; x <= xMax; x++) {
                 for (let y = yMin; y <= yMax; y++) {
-                    const tile = layer[y * width + x];
+                    let tile = layer[y * width + x];
 
                     if (!tile || tile < 1) continue;
+
+                    if (tile in animatedTiles) {
+                        const anim = animatedTiles[tile];
+                        tile = anim.frames[Math.floor(this.game.loop.frame / this.game.loop.targetFps * anim.speed) % anim.frames.length];
+                    };
 
                     this.tileImage.x = x * config.tileset.tileWidth;
                     this.tileImage.y = y * config.tileset.tileHeight;
