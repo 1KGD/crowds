@@ -20,6 +20,7 @@ pub enum Tile {
     Lillypad0 = 3,
     Lillypad1 = 4,
     Lillypad2 = 5,
+    Lillypad3 = 6,
 
     Water = 284,
     WaterRipples = 124,
@@ -29,9 +30,14 @@ pub enum Tile {
 
 impl Tile {
     pub fn lilypad(mut rng: &mut dyn Rng) -> Tile {
-        return *[Tile::Lillypad0, Tile::Lillypad1, Tile::Lillypad2]
-            .choose(&mut rng)
-            .unwrap();
+        return *[
+            Tile::Lillypad0,
+            Tile::Lillypad1,
+            Tile::Lillypad2,
+            Tile::Lillypad3,
+        ]
+        .choose(&mut rng)
+        .unwrap();
     }
 }
 

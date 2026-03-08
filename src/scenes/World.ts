@@ -10,7 +10,7 @@ import playerSpritesheetUrl from '../assets/player.png?url';
 import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import tilemapUrl from '../assets/tilemap.png?url';
 import config from '../../config';
-import animatedTiles from './animatedTiles';
+import tileSubstitution from './tileSubstitution';
 
 export const enum WorldAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
@@ -112,8 +112,10 @@ export default class World extends Phaser.Scene {
 
                     if (!tile || tile < 1) continue;
 
-                    if (tile in animatedTiles) {
-                        const anim = animatedTiles[tile];
+                    tile = this.subTile(tile, layer, width, x, y);
+
+                    if (tile in tileSubstitution.animated) {
+                        const anim = tileSubstitution.animated[tile];
                         tile = anim.frames[Math.floor(this.game.loop.frame / this.game.loop.targetFps * anim.speed) % anim.frames.length];
                     };
 
@@ -128,5 +130,36 @@ export default class World extends Phaser.Scene {
         document.getElementById("debug").innerText = `frame ${this.game.loop.frame} view x=${worldView.x} y=${worldView.y} w=${worldView.width} h=${worldView.height} | bounds min=(${xMin} ${yMin}) max=(${xMax} ${yMax}) size=(${xMax - xMin + 1} ${yMax - yMin + 1})`;
 
         this.rtx.endDraw();
+    }
+
+    private subTile(tile: number, layer: Uint16Array, width: number, x: number, y: number): number {
+        if (tile in tileSubstitution.corner) {
+            for (const sub of tileSubstitution.corner[tile]) {
+                if (layer[(y - 1) * width + x] === sub.condition && layer[y * width + x - 1] === sub.condition) return sub.topLeft;
+                if (layer[(y - 1) * width + x] === sub.condition && layer[y * width + x + 1] === sub.condition) return sub.topRight;
+                if (layer[(y + 1) * width + x] === sub.condition && layer[y * width + x - 1] === sub.condition) return sub.bottomLeft;
+                if (layer[(y + 1) * width + x] === sub.condition && layer[y * width + x + 1] === sub.condition) return sub.bottomRight;
+            }
+        }
+
+        if (tile in tileSubstitution.edge) {
+            for (const sub of tileSubstitution.edge[tile]) {
+                if (layer[(y - 1) * width + x] === sub.condition) return sub.top;
+                if (layer[(y + 1) * width + x] === sub.condition) return sub.bottom;
+                if (layer[y * width + x - 1] === sub.condition) return sub.left;
+                if (layer[y * width + x + 1] === sub.condition) return sub.right;
+            }
+        }
+
+        if (tile in tileSubstitution.corner) {
+            for (const sub of tileSubstitution.corner[tile]) {
+                if (layer[(y - 1) * width + x - 1] === sub.condition && layer[(y - 1) * width + x] === tile && layer[y * width + x - 1] === tile) return sub.innerBottomRight;
+                if (layer[(y - 1) * width + x + 1] === sub.condition && layer[(y - 1) * width + x] === tile && layer[y * width + x + 1] === tile) return sub.innerBottomLeft;
+                if (layer[(y + 1) * width + x - 1] === sub.condition && layer[(y + 1) * width + x] === tile && layer[y * width + x - 1] === tile) return sub.innerTopRight;
+                if (layer[(y + 1) * width + x + 1] === sub.condition && layer[(y + 1) * width + x] === tile && layer[y * width + x + 1] === tile) return sub.innerTopLeft;
+            }
+        }
+
+        return tile;
     }
 }
