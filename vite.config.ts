@@ -7,6 +7,7 @@ export default defineConfig({
         watch: { usePolling: false },
         allowedHosts: true,
     },
+    base: "/crowds/",
     plugins: [
         preloadPlugin(),
         wasm()
