@@ -127,8 +127,6 @@ export default class World extends Phaser.Scene {
             }
         }
 
-        document.getElementById("debug").innerText = `frame ${this.game.loop.frame} view x=${worldView.x} y=${worldView.y} w=${worldView.width} h=${worldView.height} | bounds min=(${xMin} ${yMin}) max=(${xMax} ${yMax}) size=(${xMax - xMin + 1} ${yMax - yMin + 1})`;
-
         this.rtx.endDraw();
     }
 
