@@ -15,7 +15,8 @@
     "type": "module",
     "main": "index.html",
     "scripts": {
-        "dev": "concurrently --kill-others --names rust,vite -c red,yellow 'make watch' 'vite .'"
+        "dev": "concurrently --kill-others --names rust,vite -c red,yellow 'make watch' 'vite .'",
+        "build": "make build && vite build"
     },
     "dependencies": {
         "@eslint/js": "^10.0.1",
@@ -26,7 +27,7 @@
     },
     "devDependencies": {
         "concurrently": "^9.2.1",
-        "eslint": "^10.0.2",
+        "eslint": "^10.0.3",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.56.1",
         "vite": "^7.3.1",
