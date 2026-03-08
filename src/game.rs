@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 
 const WORLD_SCALE: f32 = 96.;
 
-const SEED: u32 = 0;
+const SEED: u64 = 0;
 
 #[wasm_bindgen]
 #[repr(u16)]
@@ -49,7 +49,7 @@ impl World {
         let shape: Vec2 = vec2(width as i32, height as i32);
         let size: u32 = width * height;
 
-        let mut rng = rand::rng();
+        let mut rng: SmallRng = SmallRng::seed_from_u64(SEED);
 
         let surface_noise = Simplex::new(rng.next_u32());
 
@@ -71,6 +71,7 @@ impl World {
                     vec2((i % width) as i32, (i / width) as i32),
                     shape.x as u32,
                     &terrain_noise,
+                    &surface_noise,
                     &mut rng,
                     &surface,
                 )
@@ -84,11 +85,12 @@ impl World {
         }
     }
 
-    fn surface_gen(pos: Vec2, noise: &Simplex, mut rng: &mut dyn Rng) -> Tile {
-        let height: f64 = noise.get([
+    fn surface_gen(pos: Vec2, noise: &Simplex, rng: &mut dyn Rng) -> Tile {
+        let loc = [
             (pos.x_f32() / WORLD_SCALE) as f64,
             (pos.y_f32() / WORLD_SCALE) as f64,
-        ]);
+        ];
+        let height = noise.get(loc);
         if height <= -0.41 {
             if rng.random::<f32>() > 0.99 {
                 return Tile::WaterRipples;
@@ -102,15 +104,19 @@ impl World {
         pos: Vec2,
         width: u32,
         noise: &Simplex,
+        surface_noise: &Simplex,
         mut rng: &mut dyn Rng,
         surface: &Vec<Tile>,
     ) -> Tile {
+        let loc = [
+            (pos.x_f32() / WORLD_SCALE * 16.) as f64,
+            (pos.y_f32() / WORLD_SCALE * 16.) as f64,
+        ];
+        let height = noise.get(loc);
+        let surface_height = surface_noise.get(loc);
+
         if *surface.get(pos.to_index(width)).unwrap() == Tile::Water {
-            if noise.get([
-                (pos.x_f32() / WORLD_SCALE * 16.) as f64,
-                (pos.y_f32() / WORLD_SCALE * 16.) as f64,
-            ]) <= -0.48
-            {
+            if height >= 0.48 && surface_height > -0.415 {
                 return Tile::lilypad(&mut rng);
             }
         }
