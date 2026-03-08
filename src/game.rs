@@ -22,6 +22,12 @@ pub enum Tile {
     Lillypad2 = 5,
     Lillypad3 = 6,
 
+    Rock0 = 207,
+    Rock1 = 208,
+    Rock2 = 209,
+    Rock3 = 210,
+    Rock4 = 211,
+
     Water = 284,
     WaterRipples = 124,
 
@@ -35,6 +41,18 @@ impl Tile {
             Tile::Lillypad1,
             Tile::Lillypad2,
             Tile::Lillypad3,
+        ]
+        .choose(&mut rng)
+        .unwrap();
+    }
+
+    pub fn rock(mut rng: &mut dyn Rng) -> Tile {
+        return *[
+            Tile::Rock0,
+            Tile::Rock1,
+            Tile::Rock2,
+            Tile::Rock3,
+            Tile::Rock4,
         ]
         .choose(&mut rng)
         .unwrap();
@@ -121,9 +139,16 @@ impl World {
         let height = noise.get(loc);
         let surface_height = surface_noise.get(loc);
 
-        if *surface.get(pos.to_index(width)).unwrap() == Tile::Water {
-            if height >= 0.48 && surface_height > -0.415 {
+        let surface_tile = *surface.get(pos.to_index(width)).unwrap();
+
+        if surface_tile == Tile::Water {
+            if height >= 0.48 && surface_height > -0.4 {
                 return Tile::lilypad(&mut rng);
+            }
+        }
+        if surface_tile == Tile::Grass {
+            if rng.random::<f32>() > 0.99 {
+                return Tile::rock(rng);
             }
         }
         Tile::Air
