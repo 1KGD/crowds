@@ -10,5 +10,7 @@ export default {
     world: {
         width: 2048,
         height: 2048
-    }
+    },
+
+    dev: import.meta.env.DEV  // Do not touch
 };
