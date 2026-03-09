@@ -25,6 +25,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         super(scene, x, y, WorldAssets.PLAYER_SPRITESHEET);
         this.keys = this.setupControls();
         this.setupAnims();
+
+        this.scene.cameras.main.centerOn(this.x, this.y); // Force the camera to look at the player before they move
     }
 
     private setupAnims(): void {
