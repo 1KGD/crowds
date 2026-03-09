@@ -28,10 +28,7 @@ export default class World extends Phaser.Scene {
         super({
             physics: {
                 default: 'arcade',
-                arcade: {
-                    // debug: true
-                }
-            }
+            },
         });
     }
 
