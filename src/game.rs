@@ -12,7 +12,7 @@ const SEED: u64 = 1;
 
 #[wasm_bindgen]
 pub struct World {
-    shape: Vec2,
+    shape: TileVec2,
     surface: Vec<Tile>,
     terrain: Vec<Tile>,
 
@@ -23,7 +23,7 @@ pub struct World {
 impl World {
     #[wasm_bindgen(constructor)]
     pub fn new(width: u32, height: u32) -> World {
-        let shape: Vec2 = vec2(width as i32, height as i32);
+        let shape: TileVec2 = tile_vec2(width as i32, height as i32);
         let size: u32 = width * height;
 
         let mut rng: SmallRng = SmallRng::seed_from_u64(SEED);
@@ -33,7 +33,7 @@ impl World {
         let surface: Vec<Tile> = (0..size)
             .map(|i: u32| {
                 Self::surface_gen(
-                    vec2((i % width) as i32, (i / width) as i32),
+                    tile_vec2((i % width) as i32, (i / width) as i32),
                     &surface_noise,
                     &mut rng,
                 )
@@ -45,7 +45,7 @@ impl World {
         let terrain: Vec<Tile> = (0..size)
             .map(|i: u32| {
                 Self::terrain_gen(
-                    vec2((i % width) as i32, (i / width) as i32),
+                    tile_vec2((i % width) as i32, (i / width) as i32),
                     shape.x as u32,
                     &terrain_noise,
                     &surface_noise,
@@ -59,7 +59,7 @@ impl World {
 
         creatures.push(Creature::new(
             Box::new(TestDummy {}),
-            vec2(shape.x / 2, shape.y / 2),
+            vec2(shape.x as f32 / 2., shape.y as f32 / 2.),
         ));
 
         World {
@@ -70,7 +70,7 @@ impl World {
         }
     }
 
-    fn surface_gen(pos: Vec2, noise: &Simplex, rng: &mut dyn Rng) -> Tile {
+    fn surface_gen(pos: TileVec2, noise: &Simplex, rng: &mut dyn Rng) -> Tile {
         let loc: [f64; 2] = [
             (pos.x_f32() / WORLD_SCALE) as f64,
             (pos.y_f32() / WORLD_SCALE) as f64,
@@ -86,7 +86,7 @@ impl World {
     }
 
     fn terrain_gen(
-        pos: Vec2,
+        pos: TileVec2,
         width: u32,
         noise: &Simplex,
         surface_noise: &Simplex,
