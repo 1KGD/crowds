@@ -64,11 +64,6 @@ export default class MapObject extends Phaser.GameObjects.RenderTexture {
 
                     tile = this.subTile(tile, layer, width, x, y);
 
-                    if (tile in tileSubstitution.animated) {
-                        const anim = tileSubstitution.animated[tile];
-                        tile = anim.frames[Math.floor(this.scene.game.loop.frame / this.scene.game.loop.targetFps * anim.speed) % anim.frames.length];
-                    };
-
                     this.tileImage.x = x * config.tileset.tileWidth;
                     this.tileImage.y = y * config.tileset.tileHeight;
                     this.tileImage.setFrame(tile - 1, false, false);
@@ -107,6 +102,11 @@ export default class MapObject extends Phaser.GameObjects.RenderTexture {
                 if (layer[(y + 1) * width + x + 1] === sub.condition && layer[(y + 1) * width + x] === tile && layer[y * width + x + 1] === tile) return sub.innerTopLeft;
             }
         }
+
+        if (tile in tileSubstitution.animated) {
+            const anim = tileSubstitution.animated[tile];
+            tile = anim.frames[Math.floor(this.scene.game.loop.frame / this.scene.game.loop.targetFps * anim.speed) % anim.frames.length];
+        };
 
         return tile;
     }

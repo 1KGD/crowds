@@ -1,4 +1,5 @@
 import * as wasm from 'wasm-backend';
+import * as wasmBG from 'wasm-backend/backend_bg.wasm';
 
 import Phaser from "phaser";
 import Player from '../entities/Player';
@@ -10,6 +11,7 @@ import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import tilemapUrl from '../assets/tilemap.png?url';
 import config from '../../config';
 import MapObject from '../engine/MapObject';
+import CreatureManager from '../engine/CreatureManager';
 
 export const enum WorldAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
@@ -23,6 +25,7 @@ export default class World extends Phaser.Scene {
     public player: Player;
     public backend: wasm.World;
     public map: MapObject;
+    public creatures: CreatureManager;
 
     public constructor() {
         super({
@@ -39,12 +42,19 @@ export default class World extends Phaser.Scene {
         this.map = new MapObject(this);
         this.add.existing(this.map);
 
+        this.creatures = new CreatureManager(this);
+        this.add.existing(this.creatures);
+
         this.player = new Player(this, this.map.pixelWidth / 2, this.map.pixelHeight / 2);
         this.add.existing(this.player);
 
-        this.cameras.main.dirty = true;
-        this.events.on('prerender', () => this.map.prerender());
+        this.events.on('prerender', () => {
+            this.map.prerender();
+            this.creatures.prerender();
+        });
         this.game.finishLoading();
+
+        this.events.on('step', () => this.backend.tick());
     }
 
     public preload(): void {
