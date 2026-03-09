@@ -39,9 +39,9 @@ pub struct TestDummy {
 }
 
 impl TestDummy {
-    pub fn new() -> Self {
+    pub fn new(seed: u32) -> Self {
         TestDummy {
-            noise: Simplex::new(0),
+            noise: Simplex::new(seed),
         }
     }
 }

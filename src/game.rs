@@ -8,7 +8,7 @@ use crate::tiles::*;
 
 const WORLD_SCALE: f32 = 96.;
 
-const SEED: u64 = 1;
+const SEED: u64 = 1248815214;
 
 #[wasm_bindgen]
 #[derive(Clone)]
@@ -56,12 +56,14 @@ impl World {
             })
             .collect();
 
-        let mut creatures: Vec<Creature> = Vec::new();
-
-        creatures.push(Creature::new(
-            Box::new(TestDummy::new()),
-            vec2(shape.x as f32 / 2., shape.y as f32 / 2.),
-        ));
+        let mut creatures: Vec<Creature> = (1..256)
+            .map(|_i: u32| {
+                Creature::new(
+                    Box::new(TestDummy::new(rng.next_u32())),
+                    vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
+                )
+            })
+            .collect();
 
         World {
             shape,

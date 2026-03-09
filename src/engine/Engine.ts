@@ -44,7 +44,7 @@ export default class Engine extends Phaser.Game {
     private launch(): void {
         this.scene.start(GameScenes.BOOT);
         if (config.dev) {
-            const stats = new Stats({ trackGPU: true });
+            const stats = new Stats({ trackGPU: true, trackCPT: true });
             document.body.appendChild(stats.domElement);
             this.events.on("prestep", () => stats.begin());
             this.events.on("postrender", () => { stats.end(); stats.update(); });
