@@ -23,6 +23,7 @@ impl Creature {
         let this: Creature = self.clone();
         let new: Creature = self.behavior.as_mut().tick(delta, world, this);
         self.clone_from(&new);
+        std::mem::drop(new);
     }
 }
 
