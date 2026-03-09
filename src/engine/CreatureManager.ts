@@ -10,16 +10,13 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
     public constructor(scene: World) {
         super(scene, 0, 0, scene.scale.width, scene.scale.height, true);
 
-        this.spriteImage = this.scene.make.image({ key: WorldAssets.TEST_DUMMY_SPRITESHEET, origin: 0, visible: true });
+        this.spriteImage = this.scene.make.image({ key: WorldAssets.TEST_DUMMY_SPRITESHEET, visible: false });
         this.setOrigin(0, 0);
         this.setScrollFactor(0, 0);
     }
 
     public prerender(): void {
         this.scene.cameras.main.preRender();
-        const width = this.scene.backend.width;
-        const height = this.scene.backend.height;
-
         const { scrollX, scrollY, worldView } = this.scene.cameras.main;
 
         this.camera.setScroll(scrollX, scrollY);
@@ -27,8 +24,10 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
         this.clear().beginDraw();
 
         for (const creature of this.scene.backend.creatures) {
-            this.spriteImage.x = creature.pos.x * config.tileset.tileWidth;
-            this.spriteImage.y = creature.pos.y * config.tileset.tileHeight;
+            const [x, y] = [creature.pos.x * config.tileset.tileWidth, creature.pos.y * config.tileset.tileHeight];
+            if (x + this.spriteImage.width / 2 < worldView.left || x - this.spriteImage.width / 2 > worldView.right || y + this.spriteImage.height / 2 < worldView.top || y - this.spriteImage.height / 2 > worldView.bottom) continue;
+
+            this.spriteImage.setPosition(x, y);
             this.spriteImage.setFrame(2, false, false);
             this.batchDraw(this.spriteImage);
         }
