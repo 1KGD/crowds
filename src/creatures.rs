@@ -16,11 +16,14 @@ impl Creature {
     }
 
     pub fn tick(&mut self) {
-        self.behavior.tick();
+        let this: Box<Creature> = Box::new(self.clone());
+        let new: Creature = self.behavior.as_mut().tick(this.as_ref().clone());
+        self.clone_from(&new);
     }
 }
+
 pub trait CreatureBehavior: DynClone {
-    fn tick(&self);
+    fn tick(&mut self, creature: Creature) -> Creature;
 }
 
 dyn_clone::clone_trait_object!(CreatureBehavior);
@@ -30,5 +33,8 @@ dyn_clone::clone_trait_object!(CreatureBehavior);
 pub struct TestDummy {}
 
 impl CreatureBehavior for TestDummy {
-    fn tick(&self) {}
+    fn tick(&mut self, mut creature: Creature) -> Creature {
+        creature.pos.x += 0.1;
+        creature
+    }
 }
