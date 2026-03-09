@@ -53,8 +53,6 @@ export default class World extends Phaser.Scene {
             this.creatures.prerender();
         });
         this.game.finishLoading();
-
-        this.events.on('update', () => this.backend.tick());
     }
 
     public preload(): void {

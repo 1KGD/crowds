@@ -11,8 +11,9 @@ const WORLD_SCALE: f32 = 96.;
 const SEED: u64 = 1;
 
 #[wasm_bindgen]
+#[derive(Clone)]
 pub struct World {
-    shape: TileVec2,
+    pub shape: TileVec2,
     surface: Vec<Tile>,
     terrain: Vec<Tile>,
 
@@ -58,7 +59,7 @@ impl World {
         let mut creatures: Vec<Creature> = Vec::new();
 
         creatures.push(Creature::new(
-            Box::new(TestDummy {}),
+            Box::new(TestDummy::new()),
             vec2(shape.x as f32 / 2., shape.y as f32 / 2.),
         ));
 
@@ -140,11 +141,12 @@ impl World {
         self.shape.y as u32
     }
 
-    pub fn tick(&mut self) {
+    pub fn tick(&mut self, delta: f32) {
+        let this: World = self.clone();
         self.creatures
             .iter_mut()
             .for_each(|creature: &mut Creature| {
-                creature.tick();
+                creature.tick(delta, &this);
             });
     }
 }

@@ -9,10 +9,15 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
 
     public constructor(scene: World) {
         super(scene, 0, 0, scene.scale.width, scene.scale.height, true);
+        this.addToUpdateList();
 
         this.spriteImage = this.scene.make.image({ key: WorldAssets.TEST_DUMMY_SPRITESHEET, visible: false });
         this.setOrigin(0, 0);
         this.setScrollFactor(0, 0);
+    }
+
+    public preUpdate(_time: number, delta: number): void {
+        this.scene.backend.tick(delta / 1000);
     }
 
     public prerender(): void {
