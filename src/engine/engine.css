@@ -14,3 +14,22 @@
         margin-left: auto;
     }
 }
+
+#loading-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    display: flex;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 1000;
+}
+
+#loading {
+    margin: auto;
+
+    color: white;
+}

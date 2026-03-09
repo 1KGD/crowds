@@ -38,6 +38,7 @@ export default class World extends Phaser.Scene {
     }
 
     public create(): void {
+        this.game.loadingStatus("WASM");
         this.backend = new wasm.World(config.world.width, config.world.height);
 
         this.rtx = new Phaser.GameObjects.RenderTexture(this, 0, 0, this.scale.width, this.scale.height, true);
@@ -51,9 +52,11 @@ export default class World extends Phaser.Scene {
 
         this.cameras.main.dirty = true;
         this.events.on('prerender', () => this.prerender());
+        this.game.finishLoading();
     }
 
     public preload(): void {
+        this.game.loadingStatus("Assets");
         this.load.spritesheet(WorldAssets.PLAYER_SPRITESHEET, playerSpritesheetUrl, {
             frameWidth: 16,
             frameHeight: 32

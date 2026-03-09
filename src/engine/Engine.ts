@@ -33,6 +33,14 @@ export default class Engine extends Phaser.Game {
         this.launch();
     };
 
+    public loadingStatus(status: string): void {
+        document.getElementById("loading").innerText = `Loading ${status}...`;
+    }
+
+    public finishLoading(): void {
+        document.getElementById("loading").hidden = true;
+    }
+
     private launch(): void {
         this.scene.start(GameScenes.BOOT);
         if (config.dev) {
