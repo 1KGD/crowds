@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 
 const WORLD_SCALE: f32 = 96.;
 
-const SEED: u64 = 0;
+const SEED: u64 = 1;
 
 #[wasm_bindgen]
 #[repr(u16)]

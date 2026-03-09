@@ -1,11 +1,8 @@
 build:
 	wasm-pack build --release
 
-build-dev:
-	wasm-pack build --dev
-
 watch:
-	cargo-watch -- make build-dev
+	cargo-watch -- make
 
 install:
 	cargo install wasm-pack
