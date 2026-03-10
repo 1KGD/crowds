@@ -1,9 +1,12 @@
+use std::rc::Rc;
+
 use crate::util::*;
 use noise::*;
 use rand::prelude::*;
 use wasm_bindgen::prelude::*;
 
-use crate::creatures::*;
+use crate::civ::*;
+use crate::creature::*;
 use crate::tiles::*;
 
 const WORLD_SCALE: f32 = 96.;
@@ -17,7 +20,9 @@ pub struct World {
     surface: Vec<Tile>,
     terrain: Vec<Tile>,
 
-    creatures: Vec<Creature>,
+    creatures: Vec<Rc<Creature>>,
+
+    civ: Civ,
 }
 
 #[wasm_bindgen]
@@ -56,12 +61,16 @@ impl World {
             })
             .collect();
 
-        let creatures: Vec<Creature> = (1..1024)
+        let mut civ: Civ = Civ::new();
+
+        let creatures = (1..8)
             .map(|_i: u32| {
-                Creature::new(
+                let creature = Rc::new(Creature::new(
                     Box::new(TestDummy::new(rng.next_u32())),
                     vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
-                )
+                ));
+                civ.add_citizen(Rc::clone(&creature));
+                creature
             })
             .collect();
 
@@ -70,6 +79,7 @@ impl World {
             surface,
             terrain,
             creatures,
+            civ,
         }
     }
 
@@ -147,8 +157,8 @@ impl World {
         let this: World = self.clone();
         self.creatures
             .iter_mut()
-            .for_each(|creature: &mut Creature| {
-                creature.tick(delta, &this);
+            .for_each(|creature: &mut Rc<Creature>| {
+                Rc::make_mut(creature).tick(delta, &this);
             });
     }
 }
