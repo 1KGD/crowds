@@ -1,7 +1,6 @@
 use std::f32;
 
 use dyn_clone::*;
-use noise::*;
 use wasm_bindgen::prelude::*;
 
 use crate::game::*;

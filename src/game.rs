@@ -56,7 +56,7 @@ impl World {
             })
             .collect();
 
-        let creatures: Vec<Creature> = (1..256)
+        let creatures: Vec<Creature> = (1..128)
             .map(|_i: u32| {
                 Creature::new(
                     Box::new(TestDummy::new()),
