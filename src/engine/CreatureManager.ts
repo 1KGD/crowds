@@ -17,7 +17,7 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
     }
 
     public preUpdate(_time: number, delta: number): void {
-        //this.scene.backend.tick(delta / 1000);
+        this.scene.backend.tick(delta / 1000);
     }
 
     public prerender(): void {
