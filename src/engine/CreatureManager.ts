@@ -46,7 +46,7 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
             this.batchDraw(this.spriteImage);
 
             this.text.text = "foo";
-            this.text.setPosition(x - this.text.width / 2, y - this.text.height / 2 - this.spriteImage.height / 2);
+            this.text.setPosition(x - Math.floor(this.text.width / 2), y - Math.floor(this.text.height / 2 + this.spriteImage.height / 2));
             this.batchDraw(this.text);
         }
 
