@@ -63,9 +63,9 @@ impl World {
 
         let mut civ: Civ = Civ::new();
 
-        let creatures = (1..8)
+        let creatures: Vec<Rc<Creature>> = (1..8)
             .map(|_i: u32| {
-                let creature = Rc::new(Creature::new(
+                let creature: Rc<Creature> = Rc::new(Creature::new(
                     Box::new(TestDummy::new(rng.next_u32())),
                     vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
                 ));
@@ -121,7 +121,7 @@ impl World {
             }
         }
         if surface_tile == Tile::Grass {
-            if rng.random::<f32>() > 0.99 {
+            if rng.random::<f32>() > 0.999 {
                 return Tile::rock(rng);
             }
         }
@@ -151,6 +151,11 @@ impl World {
     #[wasm_bindgen(getter)]
     pub fn height(&self) -> u32 {
         self.shape.y as u32
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn civ(&self) -> Civ {
+        self.civ.clone()
     }
 
     pub fn tick(&mut self, delta: f32) {

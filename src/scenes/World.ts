@@ -1,5 +1,6 @@
 import * as wasm from 'wasm-backend';
-import * as wasmBG from 'wasm-backend/backend_bg.wasm';
+
+import { t } from 'i18next';
 
 import Phaser from "phaser";
 import Player from '../entities/Player';
@@ -36,7 +37,7 @@ export default class World extends Phaser.Scene {
     }
 
     public create(): void {
-        this.game.loadingStatus("WASM");
+        this.game.loadingStatus(t("loading.wasm"));
         this.backend = new wasm.World(config.world.width, config.world.height);
 
         this.map = new MapObject(this);
@@ -53,10 +54,12 @@ export default class World extends Phaser.Scene {
             this.creatures.prerender();
         });
         this.game.finishLoading();
+
+        console.log(this.backend.civ);
     }
 
     public preload(): void {
-        this.game.loadingStatus("Assets");
+        this.game.loadingStatus(t("loading.assets"));
         this.load.spritesheet(WorldAssets.PLAYER_SPRITESHEET, playerSpritesheetUrl, {
             frameWidth: 16,
             frameHeight: 32

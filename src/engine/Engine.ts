@@ -1,11 +1,16 @@
 import Stats from 'stats-gl';
 
+import i18next from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
 import Phaser from "phaser";
 
 import './engine.css';
 import Boot from "../scenes/Boot";
 import World from "../scenes/World";
 import config from "../../config";
+
+import enTranslations from '../assets/lang/en.json';
 
 export const enum GameScenes {
     BOOT = "Boot",
@@ -30,19 +35,28 @@ export default class Engine extends Phaser.Game {
         this.scene.add(GameScenes.BOOT, new Boot);
         this.scene.add(GameScenes.WORLD, new World);
 
-        this.launch();
+        this.launch().catch(err => { throw err; });
     };
 
     public loadingStatus(status: string): void {
-        document.getElementById("loading").innerText = `Loading ${status}...`;
+        document.getElementById("loading").innerText = `${status}...`;
     }
 
     public finishLoading(): void {
         document.getElementById("loading").hidden = true;
     }
 
-    private launch(): void {
+    private async launch(): Promise<void> {
         this.scene.start(GameScenes.BOOT);
+        await i18next.use(LanguageDetector).init({
+            debug: config.dev,
+            supportedLngs: ["dev", "en"],
+            resources: {
+                en: {
+                    translation: enTranslations
+                }
+            },
+        });
         if (config.dev) {
             const stats = new Stats({ trackGPU: true, trackCPT: true });
             document.body.appendChild(stats.domElement);
