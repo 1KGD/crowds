@@ -3,96 +3,50 @@ use noise::*;
 use rand::prelude::*;
 use wasm_bindgen::prelude::*;
 
+use crate::creatures::*;
+use crate::tiles::*;
+
 const WORLD_SCALE: f32 = 96.;
 
-const SEED: u64 = 1;
+const SEED: u64 = 1248815214;
 
 #[wasm_bindgen]
-#[repr(u16)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Tile {
-    Air = 0,
-    Grass = 1,
-
-    Sprout = 2,
-    Flowerpot = 36,
-
-    Lillypad0 = 3,
-    Lillypad1 = 4,
-    Lillypad2 = 5,
-    Lillypad3 = 6,
-
-    Rock0 = 207,
-    Rock1 = 208,
-    Rock2 = 209,
-    Rock3 = 210,
-    Rock4 = 211,
-
-    Water = 284,
-    WaterRipples = 124,
-
-    TallGrass = 408,
-}
-
-impl Tile {
-    pub fn lilypad(mut rng: &mut dyn Rng) -> Tile {
-        return *[
-            Tile::Lillypad0,
-            Tile::Lillypad1,
-            Tile::Lillypad2,
-            Tile::Lillypad3,
-        ]
-        .choose(&mut rng)
-        .unwrap();
-    }
-
-    pub fn rock(mut rng: &mut dyn Rng) -> Tile {
-        return *[
-            Tile::Rock0,
-            Tile::Rock1,
-            Tile::Rock2,
-            Tile::Rock3,
-            Tile::Rock4,
-        ]
-        .choose(&mut rng)
-        .unwrap();
-    }
-}
-
-#[wasm_bindgen]
+#[derive(Clone)]
 pub struct World {
-    shape: Vec2,
+    pub shape: TileVec2,
     surface: Vec<Tile>,
     terrain: Vec<Tile>,
+
+    creatures: Vec<Creature>,
 }
 
 #[wasm_bindgen]
 impl World {
     #[wasm_bindgen(constructor)]
     pub fn new(width: u32, height: u32) -> World {
-        let shape: Vec2 = vec2(width as i32, height as i32);
+        let shape: TileVec2 = tile_vec2(width as i32, height as i32);
         let size: u32 = width * height;
 
         let mut rng: SmallRng = SmallRng::seed_from_u64(SEED);
 
-        let surface_noise = Simplex::new(rng.next_u32());
+        let surface_noise: Simplex = Simplex::new(rng.next_u32());
 
-        let surface = (0..size)
+        let surface: Vec<Tile> = (0..size)
             .map(|i: u32| {
                 Self::surface_gen(
-                    vec2((i % width) as i32, (i / width) as i32),
+                    tile_vec2((i % width) as i32, (i / width) as i32),
                     &surface_noise,
                     &mut rng,
                 )
             })
             .collect();
 
-        let terrain_noise = Simplex::new(rng.next_u32());
+        let terrain_noise: Simplex = Simplex::new(rng.next_u32());
 
-        let terrain = (0..size)
+        let terrain: Vec<Tile> = (0..size)
             .map(|i: u32| {
                 Self::terrain_gen(
-                    vec2((i % width) as i32, (i / width) as i32),
+                    tile_vec2((i % width) as i32, (i / width) as i32),
                     shape.x as u32,
                     &terrain_noise,
                     &surface_noise,
@@ -102,19 +56,29 @@ impl World {
             })
             .collect();
 
+        let creatures: Vec<Creature> = (1..1024)
+            .map(|_i: u32| {
+                Creature::new(
+                    Box::new(TestDummy::new(rng.next_u32())),
+                    vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
+                )
+            })
+            .collect();
+
         World {
             shape,
             surface,
             terrain,
+            creatures,
         }
     }
 
-    fn surface_gen(pos: Vec2, noise: &Simplex, rng: &mut dyn Rng) -> Tile {
-        let loc = [
+    fn surface_gen(pos: TileVec2, noise: &Simplex, rng: &mut dyn Rng) -> Tile {
+        let loc: [f64; 2] = [
             (pos.x_f32() / WORLD_SCALE) as f64,
             (pos.y_f32() / WORLD_SCALE) as f64,
         ];
-        let height = noise.get(loc);
+        let height: f64 = noise.get(loc);
         if height <= -0.41 {
             if rng.random::<f32>() > 0.99 {
                 return Tile::WaterRipples;
@@ -125,21 +89,21 @@ impl World {
     }
 
     fn terrain_gen(
-        pos: Vec2,
+        pos: TileVec2,
         width: u32,
         noise: &Simplex,
         surface_noise: &Simplex,
         mut rng: &mut dyn Rng,
         surface: &Vec<Tile>,
     ) -> Tile {
-        let loc = [
+        let loc: [f64; 2] = [
             (pos.x_f32() / WORLD_SCALE * 16.) as f64,
             (pos.y_f32() / WORLD_SCALE * 16.) as f64,
         ];
-        let height = noise.get(loc);
-        let surface_height = surface_noise.get(loc);
+        let height: f64 = noise.get(loc);
+        let surface_height: f64 = surface_noise.get(loc);
 
-        let surface_tile = *surface.get(pos.to_index(width)).unwrap();
+        let surface_tile: Tile = *surface.get(pos.to_index(width)).unwrap();
 
         if surface_tile == Tile::Water {
             if height >= 0.48 && surface_height > -0.4 {
@@ -164,6 +128,11 @@ impl World {
         self.terrain.as_ptr()
     }
 
+    #[wasm_bindgen(js_name = creatures, getter)]
+    pub fn get_creatures(&self) -> Vec<CreatureProps> {
+        self.creatures.iter().map(|c| c.props).collect()
+    }
+
     #[wasm_bindgen(getter)]
     pub fn width(&self) -> u32 {
         self.shape.x as u32
@@ -172,5 +141,14 @@ impl World {
     #[wasm_bindgen(getter)]
     pub fn height(&self) -> u32 {
         self.shape.y as u32
+    }
+
+    pub fn tick(&mut self, delta: f32) {
+        let this: World = self.clone();
+        self.creatures
+            .iter_mut()
+            .for_each(|creature: &mut Creature| {
+                creature.tick(delta, &this);
+            });
     }
 }

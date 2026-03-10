@@ -70,8 +70,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.x += normalized.x * delta * 0.1;
             this.y += normalized.y * delta * 0.1;
 
-            this.x = Phaser.Math.Clamp(this.x, this.width / 2, this.scene.pixelWidth - this.width / 2);
-            this.y = Phaser.Math.Clamp(this.y, this.height / 3, this.scene.pixelHeight - this.height / 3);
+            this.x = Phaser.Math.Clamp(this.x, this.width / 2, this.scene.map.pixelWidth - this.width / 2);
+            this.y = Phaser.Math.Clamp(this.y, this.height / 3, this.scene.map.pixelHeight - this.height / 3);
             this.scene.cameras.main.centerOn(this.x, this.y);
 
             let anim;
