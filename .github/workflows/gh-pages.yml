@@ -41,7 +41,7 @@ jobs:
       - name: Compile Rust
         run: make
       - name: Vite Build
-        run: npm run build
+        run: npm run build-typescript
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
