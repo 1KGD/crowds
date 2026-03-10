@@ -56,12 +56,12 @@ impl TestDummy {
 impl CreatureBehavior for TestDummy {
     fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps) {
         let theta: f32 = self.noise.get([
-            (creature.pos.x * 32. / world.shape.x_f32()) as f64,
-            (creature.pos.y * 32. / world.shape.y_f32()) as f64,
+            (creature.pos.x * 96. / world.shape.x_f32()) as f64,
+            (creature.pos.y * 96. / world.shape.y_f32()) as f64,
         ]) as f32
             * f32::consts::PI
             * 2.;
-        creature.pos.x += f32::sin(theta) * 10. * delta;
-        creature.pos.y += f32::cos(theta) * 10. * delta;
+        creature.pos.x += f32::sin(theta) * 5. * delta;
+        creature.pos.y += f32::cos(theta) * 5. * delta;
     }
 }
