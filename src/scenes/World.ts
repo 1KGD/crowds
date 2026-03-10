@@ -3,21 +3,26 @@ import * as wasm from 'wasm-backend';
 import { t } from 'i18next';
 
 import Phaser from "phaser";
-import Player from '../entities/Player';
 
-import Engine from "../engine/Engine";
 
 import playerSpritesheetUrl from '../assets/player.png?url';
 import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import tilemapUrl from '../assets/tilemap.png?url';
+import fontImgUrl from '../assets/font/pixel.png?url';
+import fontBinUrl from '../assets/font/pixel.fnt?url';
+
 import config from '../../config';
+
+import Engine from "../engine/Engine";
+import Player from '../entities/Player';
 import MapObject from '../engine/MapObject';
 import CreatureManager from '../engine/CreatureManager';
 
 export const enum WorldAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
     TEST_DUMMY_SPRITESHEET = "test_dummy_spritesheet",
-    TILEMAP = "tilemap"
+    TILEMAP = "tilemap",
+    FONT = 'font'
 }
 
 export default class World extends Phaser.Scene {
@@ -72,5 +77,6 @@ export default class World extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16
         });
+        this.load.bitmapFont(WorldAssets.FONT, fontImgUrl, fontBinUrl);
     }
 }
