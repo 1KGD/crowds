@@ -129,8 +129,8 @@ impl World {
     }
 
     #[wasm_bindgen(js_name = creatures, getter)]
-    pub fn get_creatures(&self) -> Vec<Creature> {
-        self.creatures.clone()
+    pub fn get_creatures(&self) -> Vec<CreatureProps> {
+        self.creatures.iter().map(|c| c.props).collect()
     }
 
     #[wasm_bindgen(getter)]

@@ -31,8 +31,7 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
         const creatures = this.scene.backend.creatures;
 
         for (const creature of creatures) {
-            const pos = creature.props.pos;
-            creature.props.free();
+            const pos = creature.pos;
             creature.free();
             const [x, y] = [pos.x * config.tileset.tileWidth, pos.y * config.tileset.tileHeight];
             pos.free();
