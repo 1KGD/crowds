@@ -41,27 +41,14 @@ dyn_clone::clone_trait_object!(CreatureBehavior);
 
 #[wasm_bindgen]
 #[derive(Clone)]
-pub struct TestDummy {
-    noise: Simplex,
-}
+pub struct TestDummy {}
 
 impl TestDummy {
-    pub fn new(seed: u32) -> Self {
-        TestDummy {
-            noise: Simplex::new(seed),
-        }
+    pub fn new() -> Self {
+        TestDummy {}
     }
 }
 
 impl CreatureBehavior for TestDummy {
-    fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps) {
-        let theta: f32 = self.noise.get([
-            (creature.pos.x * 64. / world.shape.x_f32()) as f64,
-            (creature.pos.y * 64. / world.shape.y_f32()) as f64,
-        ]) as f32
-            * f32::consts::PI
-            * 2.;
-        creature.pos.x += f32::sin(theta) * 5. * delta;
-        creature.pos.y += f32::cos(theta) * 5. * delta;
-    }
+    fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps) {}
 }

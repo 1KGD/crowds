@@ -17,7 +17,7 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
     }
 
     public preUpdate(_time: number, delta: number): void {
-        this.scene.backend.tick(delta / 1000);
+        //this.scene.backend.tick(delta / 1000);
     }
 
     public prerender(): void {
@@ -28,7 +28,9 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
 
         this.clear().beginDraw();
 
-        for (const creature of this.scene.backend.creatures) {
+        const creatures = this.scene.backend.creatures;
+
+        for (const creature of creatures) {
             const [x, y] = [creature.props.pos.x * config.tileset.tileWidth, creature.props.pos.y * config.tileset.tileHeight];
             if (x + this.spriteImage.width / 2 < worldView.left || x - this.spriteImage.width / 2 > worldView.right || y + this.spriteImage.height / 2 < worldView.top || y - this.spriteImage.height / 2 > worldView.bottom) continue;
 

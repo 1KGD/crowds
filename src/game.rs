@@ -59,7 +59,7 @@ impl World {
         let creatures: Vec<Creature> = (1..256)
             .map(|_i: u32| {
                 Creature::new(
-                    Box::new(TestDummy::new(rng.next_u32())),
+                    Box::new(TestDummy::new()),
                     vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
                 )
             })
