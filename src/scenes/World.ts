@@ -1,22 +1,28 @@
 import * as wasm from 'wasm-backend';
-import * as wasmBG from 'wasm-backend/backend_bg.wasm';
+
+import { t } from 'i18next';
 
 import Phaser from "phaser";
-import Player from '../entities/Player';
 
-import Engine from "../engine/Engine";
 
 import playerSpritesheetUrl from '../assets/player.png?url';
 import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import tilemapUrl from '../assets/tilemap.png?url';
+import fontImgUrl from '../assets/font/pixel.png?url';
+import fontBinUrl from '../assets/font/pixel.fnt?url';
+
 import config from '../../config';
+
+import Engine from "../engine/Engine";
+import Player from '../entities/Player';
 import MapObject from '../engine/MapObject';
 import CreatureManager from '../engine/CreatureManager';
 
 export const enum WorldAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
     TEST_DUMMY_SPRITESHEET = "test_dummy_spritesheet",
-    TILEMAP = "tilemap"
+    TILEMAP = "tilemap",
+    FONT = 'font'
 }
 
 export default class World extends Phaser.Scene {
@@ -36,7 +42,7 @@ export default class World extends Phaser.Scene {
     }
 
     public create(): void {
-        this.game.loadingStatus("WASM");
+        this.game.loadingStatus(t("loading.wasm"));
         this.backend = new wasm.World(config.world.width, config.world.height);
 
         this.map = new MapObject(this);
@@ -53,10 +59,12 @@ export default class World extends Phaser.Scene {
             this.creatures.prerender();
         });
         this.game.finishLoading();
+
+        console.log(this.backend.civ);
     }
 
     public preload(): void {
-        this.game.loadingStatus("Assets");
+        this.game.loadingStatus(t("loading.assets"));
         this.load.spritesheet(WorldAssets.PLAYER_SPRITESHEET, playerSpritesheetUrl, {
             frameWidth: 16,
             frameHeight: 32
@@ -69,5 +77,6 @@ export default class World extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16
         });
+        this.load.bitmapFont(WorldAssets.FONT, fontImgUrl, fontBinUrl);
     }
 }
