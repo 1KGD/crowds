@@ -18,6 +18,18 @@ pub struct CreatureProps {
 }
 
 #[wasm_bindgen]
+impl CreatureProps {
+    #[wasm_bindgen(js_name=citizen, getter)]
+    pub fn get_citizen(&self) -> Option<Citizen> {
+        let rc = self.citizen.upgrade();
+        if rc.is_none() {
+            return Option::None;
+        }
+        Option::Some(rc.unwrap().as_ref().clone())
+    }
+}
+
+#[wasm_bindgen]
 #[derive(Clone)]
 pub struct Creature {
     behavior: Box<dyn CreatureBehavior>,

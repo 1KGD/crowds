@@ -39,16 +39,24 @@ pub struct Task {
 #[derive(Clone)]
 pub struct Citizen {
     creature: Rc<Creature>,
+    name: String,
     task: Option<Rc<Task>>,
 }
 
+#[wasm_bindgen]
 impl Citizen {
-    pub fn new(creature: &mut Rc<Creature>) -> Rc<Self> {
+    pub(crate) fn new(creature: &mut Rc<Creature>) -> Rc<Self> {
         let rc: Rc<Citizen> = Rc::new(Citizen {
             creature: Rc::clone(creature),
+            name: "Bob".to_owned(),
             task: Option::None,
         });
         Rc::make_mut(creature).make_citizen(&rc.clone());
         rc
+    }
+
+    #[wasm_bindgen(js_name = name, getter)]
+    pub fn get_name(&self) -> String {
+        self.name.to_owned()
     }
 }
