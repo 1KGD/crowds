@@ -25,7 +25,9 @@ impl Civ {
         self.name.clone()
     }
 
-    pub(crate) fn add_citizen(&mut self) {}
+    pub(crate) fn add_citizen(&mut self, citizen: Rc<Citizen>) {
+        self.citizens.push(citizen);
+    }
 }
 
 #[derive(Clone)]

@@ -5,14 +5,14 @@ use dyn_clone::*;
 use noise::*;
 use wasm_bindgen::prelude::*;
 
-use crate::civ::Citizen;
+use crate::civ::*;
 use crate::game::*;
 use crate::util::*;
 
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct CreatureProps {
-    citizen: Option<Citizen>,
+    citizen: Option<Rc<Citizen>>,
     pub pos: Vec2,
     pub anim: u8,
 }
@@ -21,7 +21,10 @@ pub struct CreatureProps {
 impl CreatureProps {
     #[wasm_bindgen(js_name=citizen, getter)]
     pub fn get_citizen(&self) -> Option<Citizen> {
-        self.citizen.clone()
+        if self.citizen.is_none() {
+            return Option::None;
+        }
+        Option::Some(self.citizen.clone().unwrap().as_ref().clone())
     }
 }
 
@@ -49,8 +52,10 @@ impl Creature {
         self.behavior.as_mut().tick(delta, world, &mut self.props);
     }
 
-    pub(crate) fn make_citizen(&mut self) {
-        self.props.citizen = Option::Some(Citizen::new());
+    pub(crate) fn make_citizen(&mut self, civ: &mut Civ) {
+        let citizen = Rc::new(Citizen::new());
+        self.props.citizen = Option::Some(Rc::clone(&citizen));
+        civ.add_citizen(citizen);
     }
 
     pub(crate) fn get_props(&self) -> CreatureProps {
