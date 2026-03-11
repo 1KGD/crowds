@@ -74,7 +74,7 @@ impl World {
             })
             .collect();
 
-        (1..2040).for_each(|_i: u32| {
+        (1..1016).for_each(|_i: u32| {
             creatures.push(Rc::new(Creature::new(
                 Box::new(TestDummy::new(rng.next_u32())),
                 vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
