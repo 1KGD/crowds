@@ -7,6 +7,6 @@ export default class Boot extends Phaser.Scene {
     }
 
     public create(): void {
-        this.game.scene.start(GameScenes.WORLD);
+        this.game.scene.start(GameScenes.MAIN_MENU);
     }
 }
