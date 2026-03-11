@@ -1,15 +1,18 @@
 use std::f32;
+use std::rc::*;
 
 use dyn_clone::*;
 use noise::*;
 use wasm_bindgen::prelude::*;
 
+use crate::civ::Citizen;
 use crate::game::*;
 use crate::util::*;
 
 #[wasm_bindgen]
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct CreatureProps {
+    citizen: Weak<Citizen>,
     pub pos: Vec2,
     pub anim: u8,
 }
@@ -18,19 +21,37 @@ pub struct CreatureProps {
 #[derive(Clone)]
 pub struct Creature {
     behavior: Box<dyn CreatureBehavior>,
-    pub props: CreatureProps,
+    props: CreatureProps,
 }
 
+#[wasm_bindgen]
 impl Creature {
-    pub fn new(behavior: Box<dyn CreatureBehavior>, pos: Vec2) -> Creature {
+    pub(crate) fn new(behavior: Box<dyn CreatureBehavior>, pos: Vec2) -> Creature {
         Creature {
             behavior,
-            props: CreatureProps { pos, anim: 0 },
+            props: CreatureProps {
+                pos,
+                anim: 0,
+                citizen: Weak::new(),
+            },
         }
     }
 
-    pub fn tick(&mut self, delta: f32, world: &World) {
+    pub(crate) fn tick(&mut self, delta: f32, world: &World) {
         self.behavior.as_mut().tick(delta, world, &mut self.props);
+    }
+
+    pub(crate) fn make_citizen(&mut self, citizen: &Rc<Citizen>) {
+        self.props.citizen = Rc::downgrade(citizen);
+    }
+
+    #[wasm_bindgen(js_name = citizen, getter)]
+    pub fn get_citizen(&self) -> Option<Citizen> {
+        Option::Some(self.props.citizen.upgrade().unwrap().as_ref().clone())
+    }
+
+    pub(crate) fn get_props(&self) -> CreatureProps {
+        self.props.clone()
     }
 }
 

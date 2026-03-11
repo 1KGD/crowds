@@ -69,7 +69,7 @@ impl World {
                     Box::new(TestDummy::new(rng.next_u32())),
                     vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
                 ));
-                civ.add_citizen(Rc::clone(&creature));
+                civ.add_citizen(&mut Rc::clone(&creature));
                 creature
             })
             .collect();
@@ -140,7 +140,7 @@ impl World {
 
     #[wasm_bindgen(js_name = creatures, getter)]
     pub fn get_creatures(&self) -> Vec<CreatureProps> {
-        self.creatures.iter().map(|c| c.props).collect()
+        self.creatures.iter().map(|c| c.get_props()).collect()
     }
 
     #[wasm_bindgen(getter)]

@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::rc::*;
 
 use wasm_bindgen::prelude::*;
 
@@ -8,7 +8,7 @@ use crate::creature::*;
 #[derive(Clone)]
 pub struct Civ {
     name: String,
-    citizens: Vec<Citizen>,
+    citizens: Vec<Rc<Citizen>>,
 }
 
 #[wasm_bindgen]
@@ -25,18 +25,30 @@ impl Civ {
         self.name.clone()
     }
 
-    pub(crate) fn add_citizen(&mut self, creature: Rc<Creature>) {
+    pub(crate) fn add_citizen(&mut self, creature: &mut Rc<Creature>) {
         self.citizens.push(Citizen::new(creature));
     }
 }
 
 #[derive(Clone)]
+pub struct Task {
+    owner: Weak<Citizen>,
+}
+
+#[wasm_bindgen]
+#[derive(Clone)]
 pub struct Citizen {
     creature: Rc<Creature>,
+    task: Option<Rc<Task>>,
 }
 
 impl Citizen {
-    pub fn new(creature: Rc<Creature>) -> Self {
-        Citizen { creature }
+    pub fn new(creature: &mut Rc<Creature>) -> Rc<Self> {
+        let rc: Rc<Citizen> = Rc::new(Citizen {
+            creature: Rc::clone(creature),
+            task: Option::None,
+        });
+        Rc::make_mut(creature).make_citizen(&rc.clone());
+        rc
     }
 }
