@@ -1,5 +1,9 @@
 {
     "loading": {
-        "assets": "Loading Assets"
+        "assets": "Loading Assets",
+        "wasm": "WASM"
+    },
+    "menu": {
+        "title": "CROWDS"
     }
 }

@@ -11,9 +11,11 @@ import World from "../scenes/World";
 import config from "../../config";
 
 import enTranslations from '../assets/lang/en.json';
+import MainMenu from '../scenes/MainMenu';
 
 export const enum GameScenes {
     BOOT = "Boot",
+    MAIN_MENU = "Main Menu",
     WORLD = "World"
 }
 
@@ -30,9 +32,14 @@ export default class Engine extends Phaser.Game {
             clearBeforeRender: false,
             height: config.display.height,
             parent: document.getElementById("display") as HTMLCanvasElement,
+
+            input: {
+                activePointers: 1
+            }
         });
 
         this.scene.add(GameScenes.BOOT, new Boot);
+        this.scene.add(GameScenes.MAIN_MENU, new MainMenu);
         this.scene.add(GameScenes.WORLD, new World);
 
         this.launch().catch(err => { throw err; });

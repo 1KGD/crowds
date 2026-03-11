@@ -1,3 +1,5 @@
+import wasm from 'wasm-backend';
+
 import Phaser from "phaser";
 import World, { WorldAssets } from "../scenes/World";
 import config from "../../config";
@@ -34,22 +36,32 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
 
         const creatures = this.scene.backend.creatures;
 
-        for (const creature of creatures) {
-            const pos = creature.pos;
-            creature.free();
-            const [x, y] = [pos.x * config.tileset.tileWidth, pos.y * config.tileset.tileHeight];
-            pos.free();
-            if (x + this.spriteImage.width / 2 < worldView.left || x - this.spriteImage.width / 2 > worldView.right || y + this.spriteImage.height / 2 < worldView.top || y - this.spriteImage.height / 2 > worldView.bottom) continue;
-
-            this.spriteImage.setPosition(x, y);
-            this.spriteImage.setFrame(2, false, false);
-            this.batchDraw(this.spriteImage);
-
-            this.text.text = "foo";
-            this.text.setPosition(x - Math.floor(this.text.width / 2), y - Math.floor(this.text.height / 2 + this.spriteImage.height / 2));
-            this.batchDraw(this.text);
-        }
+        for (const creature of creatures) this.renderCreature(creature, worldView);
 
         this.endDraw();
+    }
+
+    private renderCreature(creature: wasm.CreatureProps, worldView: Phaser.Geom.Rectangle): void {
+        const pos = creature.pos;
+        const anim = creature.anim;
+        const citizen = creature.citizen;
+        try {
+            const [x, y] = [pos.x * config.tileset.tileWidth, pos.y * config.tileset.tileHeight];
+            if (x + this.spriteImage.width / 2 < worldView.left || x - this.spriteImage.width / 2 > worldView.right || y + this.spriteImage.height / 2 < worldView.top || y - this.spriteImage.height / 2 > worldView.bottom) return;
+
+            this.spriteImage.setPosition(x, y);
+            this.spriteImage.setFrame(Math.floor(anim / 2) * 6 + Math.floor(this.scene.game.loop.frame / 10) % 4, false, false);
+            this.batchDraw(this.spriteImage);
+
+            if (citizen) {
+                this.text.text = `${citizen.name}`;
+                this.text.setPosition(x - Math.floor(this.text.width / 2), y - Math.floor(this.text.height / 2 + this.spriteImage.height / 2));
+                this.batchDraw(this.text);
+            }
+        } finally {
+            creature.free();
+            pos.free();
+            if (citizen) citizen.free();
+        }
     }
 }

@@ -63,16 +63,23 @@ impl World {
 
         let mut civ: Civ = Civ::new();
 
-        let creatures: Vec<Rc<Creature>> = (1..1024)
+        let mut creatures: Vec<Rc<Creature>> = (1..8)
             .map(|_i: u32| {
-                let creature: Rc<Creature> = Rc::new(Creature::new(
+                let mut creature: Creature = Creature::new(
                     Box::new(TestDummy::new(rng.next_u32())),
                     vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
-                ));
-                civ.add_citizen(Rc::clone(&creature));
-                creature
+                );
+                creature.make_citizen(&mut civ);
+                Rc::new(creature)
             })
             .collect();
+
+        (1..1016).for_each(|_i: u32| {
+            creatures.push(Rc::new(Creature::new(
+                Box::new(TestDummy::new(rng.next_u32())),
+                vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
+            )))
+        });
 
         World {
             shape,
@@ -140,7 +147,7 @@ impl World {
 
     #[wasm_bindgen(js_name = creatures, getter)]
     pub fn get_creatures(&self) -> Vec<CreatureProps> {
-        self.creatures.iter().map(|c| c.props).collect()
+        self.creatures.iter().map(|c| c.get_props()).collect()
     }
 
     #[wasm_bindgen(getter)]
