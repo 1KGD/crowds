@@ -6,12 +6,16 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
     public override scene: World;
 
     private readonly spriteImage: Phaser.GameObjects.Image;
+    private readonly text: Phaser.GameObjects.BitmapText;
 
     public constructor(scene: World) {
         super(scene, 0, 0, scene.scale.width, scene.scale.height, true);
         this.addToUpdateList();
 
         this.spriteImage = this.scene.make.image({ key: WorldAssets.TEST_DUMMY_SPRITESHEET, visible: false });
+        this.text = this.scene.add.bitmapText(0, 0, WorldAssets.FONT);
+        this.text.visible = false;
+
         this.setOrigin(0, 0);
         this.setScrollFactor(0, 0);
     }
@@ -40,6 +44,10 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
             this.spriteImage.setPosition(x, y);
             this.spriteImage.setFrame(2, false, false);
             this.batchDraw(this.spriteImage);
+
+            this.text.text = "foo";
+            this.text.setPosition(x - Math.floor(this.text.width / 2), y - Math.floor(this.text.height / 2 + this.spriteImage.height / 2));
+            this.batchDraw(this.text);
         }
 
         this.endDraw();

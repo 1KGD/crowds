@@ -63,7 +63,7 @@ impl World {
 
         let mut civ: Civ = Civ::new();
 
-        let creatures: Vec<Rc<Creature>> = (1..8)
+        let creatures: Vec<Rc<Creature>> = (1..1024)
             .map(|_i: u32| {
                 let creature: Rc<Creature> = Rc::new(Creature::new(
                     Box::new(TestDummy::new(rng.next_u32())),

@@ -39,7 +39,7 @@ export default class Engine extends Phaser.Game {
     };
 
     public loadingStatus(status: string): void {
-        document.getElementById("loading").innerText = `${status}...`;
+
     }
 
     public finishLoading(): void {
