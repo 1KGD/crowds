@@ -65,12 +65,12 @@ impl World {
 
         let creatures: Vec<Rc<Creature>> = (1..1024)
             .map(|_i: u32| {
-                let creature: Rc<Creature> = Rc::new(Creature::new(
+                let mut creature: Creature = Creature::new(
                     Box::new(TestDummy::new(rng.next_u32())),
                     vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
-                ));
-                civ.add_citizen(&mut Rc::clone(&creature));
-                creature
+                );
+                creature.make_citizen();
+                Rc::new(creature)
             })
             .collect();
 

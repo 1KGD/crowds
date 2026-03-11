@@ -12,7 +12,7 @@ use crate::util::*;
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct CreatureProps {
-    citizen: Weak<Citizen>,
+    citizen: Option<Citizen>,
     pub pos: Vec2,
     pub anim: u8,
 }
@@ -21,11 +21,7 @@ pub struct CreatureProps {
 impl CreatureProps {
     #[wasm_bindgen(js_name=citizen, getter)]
     pub fn get_citizen(&self) -> Option<Citizen> {
-        let rc = self.citizen.upgrade();
-        if rc.is_none() {
-            return Option::None;
-        }
-        Option::Some(rc.unwrap().as_ref().clone())
+        self.citizen.clone()
     }
 }
 
@@ -44,7 +40,7 @@ impl Creature {
             props: CreatureProps {
                 pos,
                 anim: 0,
-                citizen: Weak::new(),
+                citizen: Option::None,
             },
         }
     }
@@ -53,13 +49,8 @@ impl Creature {
         self.behavior.as_mut().tick(delta, world, &mut self.props);
     }
 
-    pub(crate) fn make_citizen(&mut self, citizen: &Rc<Citizen>) {
-        self.props.citizen = Rc::downgrade(citizen);
-    }
-
-    #[wasm_bindgen(js_name = citizen, getter)]
-    pub fn get_citizen(&self) -> Option<Citizen> {
-        Option::Some(self.props.citizen.upgrade().unwrap().as_ref().clone())
+    pub(crate) fn make_citizen(&mut self) {
+        self.props.citizen = Option::Some(Citizen::new());
     }
 
     pub(crate) fn get_props(&self) -> CreatureProps {
