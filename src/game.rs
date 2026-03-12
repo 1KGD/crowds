@@ -7,6 +7,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::civ::*;
 use crate::creature::*;
+use crate::creature::test_dummy::TestDummy;
 use crate::tiles::*;
 
 const WORLD_SCALE: f32 = 96.;
