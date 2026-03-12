@@ -15,8 +15,8 @@ import config from '../../config';
 
 import Engine from "../engine/Engine";
 import Player from '../entities/Player';
-import MapObject from '../engine/MapObject';
-import CreatureManager from '../engine/CreatureManager';
+import MapRenderer from '../engine/MapRenderer';
+import CreatureRenderer from '../engine/CreatureRenderer';
 
 export const enum WorldAssets {
     PLAYER_SPRITESHEET = "player_spritesheet",
@@ -30,8 +30,8 @@ export default class World extends Phaser.Scene {
 
     public player: Player;
     public backend: wasm.World;
-    public map: MapObject;
-    public creatures: CreatureManager;
+    public map: MapRenderer;
+    public creatures: CreatureRenderer;
 
     public constructor() {
         super({
@@ -45,10 +45,10 @@ export default class World extends Phaser.Scene {
         this.game.loadingStatus(t("loading.wasm"));
         this.backend = new wasm.World(config.world.width, config.world.height);
 
-        this.map = new MapObject(this);
+        this.map = new MapRenderer(this);
         this.add.existing(this.map);
 
-        this.creatures = new CreatureManager(this);
+        this.creatures = new CreatureRenderer(this);
         this.add.existing(this.creatures);
 
         this.player = new Player(this, this.map.pixelWidth / 2, this.map.pixelHeight / 2);

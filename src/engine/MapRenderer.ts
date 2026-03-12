@@ -5,7 +5,7 @@ import World, { WorldAssets } from '../scenes/World';
 import config from '../../config';
 import tileSubstitution from '../scenes/tileSubstitution';
 
-export default class MapObject extends Phaser.GameObjects.RenderTexture {
+export default class MapRenderer extends Phaser.GameObjects.RenderTexture {
     public override scene: World;
 
     private readonly tileImage: Phaser.GameObjects.Image;

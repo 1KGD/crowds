@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import World, { WorldAssets } from "../scenes/World";
 import config from "../../config";
 
-export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
+export default class CreatureRenderer extends Phaser.GameObjects.RenderTexture {
     public override scene: World;
 
     private readonly spriteImage: Phaser.GameObjects.Image;
