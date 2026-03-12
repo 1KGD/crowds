@@ -2,8 +2,6 @@ use std::rc::*;
 
 use wasm_bindgen::prelude::*;
 
-use crate::creature::*;
-
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct Civ {
