@@ -19,7 +19,7 @@ impl Civ {
         Civ {
             name: "TestCiv".to_owned(),
             citizens: Vec::new(),
-            tasks: Vec::new(),
+            tasks: vec![Rc::new(Task::new())],
         }
     }
 
@@ -55,6 +55,15 @@ impl Civ {
 pub struct Task {
     pub owned: bool,
     pub target: TileVec2,
+}
+
+impl Task {
+    pub fn new() -> Self {
+        Self {
+            owned: false,
+            target: TileVec2(0, 0),
+        }
+    }
 }
 
 #[wasm_bindgen]

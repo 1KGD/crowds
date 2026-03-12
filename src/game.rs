@@ -66,10 +66,8 @@ impl World {
 
         let mut creatures: Vec<Rc<Creature>> = (0..8)
             .map(|i: u32| {
-                let mut creature: Creature = Creature::new(
-                    Box::new(TestDummy::new(rng.next_u32())),
-                    Vec2::from(shape) / 2.,
-                );
+                let mut creature: Creature =
+                    Creature::new(Box::new(TestDummy::new(rng.next_u32())), Vec2(0., 0.));
                 creature.make_citizen(&mut civ, format!("thing {}", i + 1));
                 Rc::new(creature)
             })
@@ -167,5 +165,6 @@ impl World {
             .for_each(|creature: &mut Rc<Creature>| {
                 Rc::make_mut(creature).tick(delta, &this);
             });
+        self.civ.tick();
     }
 }

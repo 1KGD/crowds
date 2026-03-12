@@ -24,7 +24,7 @@ impl TestDummy {
             |p| p.adjacent(),
             |p| *p == pos,
         );
-        creature.pos += (Vec2::from(*path.unwrap().first().unwrap()) - creature.pos) / 100.
+        creature.pos += (Vec2::from(*path.unwrap().first().unwrap()) - creature.pos) / 10.
     }
 }
 
