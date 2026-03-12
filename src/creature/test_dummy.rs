@@ -27,7 +27,9 @@ impl CreatureBehavior for TestDummy {
             (creature.pos.x * 96. / world.shape.x_f32()) as f64,
             (creature.pos.y * 96. / world.shape.y_f32()) as f64,
         ]) as f32
-            / 16.
+            / 8.
+            * f32::consts::PI
+            * 2.
             * delta;
         let theta = f32::floor(self.heading * 8.) / 8. * f32::consts::PI * 2.;
         creature.pos.x += f32::sin(theta) * 5. * delta;
