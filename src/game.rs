@@ -30,7 +30,7 @@ pub struct World {
 impl World {
     #[wasm_bindgen(constructor)]
     pub fn new(width: u32, height: u32) -> World {
-        let shape: TileVec2 = tile_vec2(width as i32, height as i32);
+        let shape: TileVec2 = TileVec2(width as i32, height as i32);
         let size: u32 = width * height;
 
         let mut rng: SmallRng = SmallRng::seed_from_u64(SEED);
@@ -40,7 +40,7 @@ impl World {
         let surface: Vec<Tile> = (0..size)
             .map(|i: u32| {
                 Self::surface_gen(
-                    tile_vec2((i % width) as i32, (i / width) as i32),
+                    TileVec2((i % width) as i32, (i / width) as i32),
                     &surface_noise,
                     &mut rng,
                 )
@@ -52,8 +52,8 @@ impl World {
         let terrain: Vec<Tile> = (0..size)
             .map(|i: u32| {
                 Self::terrain_gen(
-                    tile_vec2((i % width) as i32, (i / width) as i32),
-                    shape.x as u32,
+                    TileVec2((i % width) as i32, (i / width) as i32),
+                    shape.0 as u32,
                     &terrain_noise,
                     &surface_noise,
                     &mut rng,
@@ -68,7 +68,7 @@ impl World {
             .map(|i: u32| {
                 let mut creature: Creature = Creature::new(
                     Box::new(TestDummy::new(rng.next_u32())),
-                    vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
+                    Vec2::from(shape) / 2.,
                 );
                 creature.make_citizen(&mut civ, format!("thing {}", i + 1));
                 Rc::new(creature)
@@ -78,7 +78,7 @@ impl World {
         (0..1016).for_each(|_i: u32| {
             creatures.push(Rc::new(Creature::new(
                 Box::new(TestDummy::new(rng.next_u32())),
-                vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
+                Vec2::from(shape) / 2.,
             )))
         });
 
@@ -92,11 +92,8 @@ impl World {
     }
 
     fn surface_gen(pos: TileVec2, noise: &Simplex, rng: &mut dyn Rng) -> Tile {
-        let loc: [f64; 2] = [
-            (pos.x_f32() / WORLD_SCALE) as f64,
-            (pos.y_f32() / WORLD_SCALE) as f64,
-        ];
-        let height: f64 = noise.get(loc);
+        let loc: Vec2 = Vec2::from(pos) / WORLD_SCALE;
+        let height: f64 = noise.get([loc.0 as f64, loc.1 as f64]);
         if height <= -0.41 {
             if rng.random::<f32>() > 0.99 {
                 return Tile::WaterRipples;
@@ -114,12 +111,9 @@ impl World {
         mut rng: &mut dyn Rng,
         surface: &Vec<Tile>,
     ) -> Tile {
-        let loc: [f64; 2] = [
-            (pos.x_f32() / WORLD_SCALE * 16.) as f64,
-            (pos.y_f32() / WORLD_SCALE * 16.) as f64,
-        ];
-        let height: f64 = noise.get(loc);
-        let surface_height: f64 = surface_noise.get(loc);
+        let loc: Vec2 = Vec2::from(pos) / WORLD_SCALE * 16.;
+        let height: f64 = noise.get([loc.0 as f64, loc.1 as f64]);
+        let surface_height: f64 = surface_noise.get([loc.0 as f64, loc.1 as f64]);
 
         let surface_tile: Tile = *surface.get(pos.to_index(width)).unwrap();
 
@@ -153,12 +147,12 @@ impl World {
 
     #[wasm_bindgen(getter)]
     pub fn width(&self) -> u32 {
-        self.shape.x as u32
+        self.shape.0 as u32
     }
 
     #[wasm_bindgen(getter)]
     pub fn height(&self) -> u32 {
-        self.shape.y as u32
+        self.shape.1 as u32
     }
 
     #[wasm_bindgen(getter)]
