@@ -88,4 +88,10 @@ impl Citizen {
             }
         }
     }
+
+    pub(crate) fn request_task(&mut self) {
+        if self.task.is_none() {
+            self.wants_task = true;
+        }
+    }
 }

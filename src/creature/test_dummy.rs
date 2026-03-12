@@ -20,5 +20,10 @@ impl TestDummy {
 }
 
 impl CreatureBehavior for TestDummy {
-    fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps) {}
+    fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps) {
+        if creature.citizen.is_some() {
+            let mut citizen: RefMut<'_, Citizen> = creature.citizen.as_ref().unwrap().borrow_mut();
+            citizen.request_task();
+        }
+    }
 }
