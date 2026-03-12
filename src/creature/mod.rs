@@ -53,8 +53,8 @@ impl Creature {
         self.behavior.as_mut().tick(delta, world, &mut self.props);
     }
 
-    pub(crate) fn make_citizen(&mut self, civ: &mut Civ) {
-        let citizen = Rc::new(Citizen::new());
+    pub(crate) fn make_citizen(&mut self, civ: &mut Civ, name: String) {
+        let citizen = Rc::new(Citizen::new(name));
         self.props.citizen = Option::Some(Rc::clone(&citizen));
         civ.add_citizen(citizen);
     }

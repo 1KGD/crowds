@@ -42,9 +42,9 @@ pub struct Citizen {
 
 #[wasm_bindgen]
 impl Citizen {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(name: String) -> Self {
         Citizen {
-            name: "Bob".to_owned(),
+            name: name,
             task: Option::None,
         }
     }

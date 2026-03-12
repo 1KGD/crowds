@@ -6,8 +6,8 @@ use rand::prelude::*;
 use wasm_bindgen::prelude::*;
 
 use crate::civ::*;
-use crate::creature::*;
 use crate::creature::test_dummy::TestDummy;
+use crate::creature::*;
 use crate::tiles::*;
 
 const WORLD_SCALE: f32 = 96.;
@@ -64,18 +64,18 @@ impl World {
 
         let mut civ: Civ = Civ::new();
 
-        let mut creatures: Vec<Rc<Creature>> = (1..8)
-            .map(|_i: u32| {
+        let mut creatures: Vec<Rc<Creature>> = (0..8)
+            .map(|i: u32| {
                 let mut creature: Creature = Creature::new(
                     Box::new(TestDummy::new(rng.next_u32())),
                     vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
                 );
-                creature.make_citizen(&mut civ);
+                creature.make_citizen(&mut civ, format!("thing {}", i + 1));
                 Rc::new(creature)
             })
             .collect();
 
-        (1..1016).for_each(|_i: u32| {
+        (0..1016).for_each(|_i: u32| {
             creatures.push(Rc::new(Creature::new(
                 Box::new(TestDummy::new(rng.next_u32())),
                 vec2(shape.x_f32() / 2., shape.y_f32() / 2.),
