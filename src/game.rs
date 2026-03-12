@@ -67,7 +67,7 @@ impl World {
         let mut creatures: Vec<Rc<Creature>> = (0..8)
             .map(|i: u32| {
                 let mut creature: Creature =
-                    Creature::new(Box::new(TestDummy::new(rng.next_u32())), Vec2(0., 0.));
+                    Creature::new(Box::new(TestDummy::new()), Vec2::from(shape) / 2.);
                 creature.make_citizen(&mut civ, format!("thing {}", i + 1));
                 Rc::new(creature)
             })
@@ -75,7 +75,7 @@ impl World {
 
         (0..1016).for_each(|_i: u32| {
             creatures.push(Rc::new(Creature::new(
-                Box::new(TestDummy::new(rng.next_u32())),
+                Box::new(TestDummy::new()),
                 Vec2::from(shape) / 2.,
             )))
         });

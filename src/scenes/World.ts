@@ -50,7 +50,7 @@ export default class World extends Phaser.Scene {
         this.creatures = new CreatureRenderer(this);
         this.add.existing(this.creatures);
 
-        this.player = new Player(this, 0, 0);
+        this.player = new Player(this, this.map.pixelWidth / 2, this.map.pixelHeight / 2);
         this.add.existing(this.player);
 
         this.events.on('prerender', () => {
