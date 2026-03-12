@@ -30,7 +30,10 @@ impl CreatureBehavior for TestDummy {
             citizen.request_task();
 
             if citizen.task.is_some() {
-                self.move_towards(&mut creature_clone, citizen.task.as_ref().unwrap().target);
+                self.move_towards(
+                    &mut creature_clone,
+                    citizen.task.as_ref().unwrap().borrow().target,
+                );
             }
         }
     }

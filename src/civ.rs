@@ -10,7 +10,7 @@ use crate::util::*;
 pub struct Civ {
     name: String,
     citizens: Vec<Rc<RefCell<Citizen>>>,
-    tasks: Vec<Rc<Task>>,
+    tasks: Vec<Rc<RefCell<Task>>>,
 }
 
 #[wasm_bindgen]
@@ -19,7 +19,7 @@ impl Civ {
         Civ {
             name: "TestCiv".to_owned(),
             citizens: Vec::new(),
-            tasks: vec![Rc::new(Task::new())],
+            tasks: vec![Rc::new(RefCell::new(Task::new()))],
         }
     }
 
@@ -41,9 +41,9 @@ impl Civ {
             });
     }
 
-    pub(crate) fn request_task(&self) -> Option<Rc<Task>> {
+    pub(crate) fn request_task(&self) -> Option<Rc<RefCell<Task>>> {
         for task in &self.tasks {
-            if !task.owned {
+            if !task.borrow().owned {
                 return Option::Some(Rc::clone(task));
             }
         }
@@ -70,7 +70,7 @@ impl Task {
 #[derive(Clone)]
 pub struct Citizen {
     name: String,
-    pub(crate) task: Option<Rc<Task>>,
+    pub(crate) task: Option<Rc<RefCell<Task>>>,
     wants_task: bool,
 }
 
@@ -93,6 +93,7 @@ impl Citizen {
         if self.wants_task {
             self.task = civ.request_task();
             if self.task.is_some() {
+                self.task.as_mut().unwrap().borrow_mut().owned = true;
                 self.wants_task = false;
             }
         }
