@@ -4,7 +4,6 @@ import { t } from 'i18next';
 
 import Phaser from "phaser";
 
-
 import playerSpritesheetUrl from '../assets/player.png?url';
 import testDummySpritesheetUrl from '../assets/dummy.png?url';
 import tilemapUrl from '../assets/tilemap.png?url';

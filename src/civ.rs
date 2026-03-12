@@ -61,7 +61,7 @@ impl Task {
     pub fn new() -> Self {
         Self {
             owned: false,
-            target: TileVec2(0, 0),
+            target: TileVec2(20, 30),
         }
     }
 }

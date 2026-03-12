@@ -19,12 +19,7 @@ impl TestDummy {
     }
 
     pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2) {
-        let path = bfs(
-            &TileVec2::from(creature.pos),
-            |p| p.adjacent(),
-            |p| *p == pos,
-        );
-        creature.pos += (Vec2::from(*path.unwrap().first().unwrap()) - creature.pos) / 10.
+        creature.pos += (Vec2::from(pos) - creature.pos) / 10.
     }
 }
 
