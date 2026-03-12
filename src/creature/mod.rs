@@ -1,5 +1,6 @@
 use std::f32;
 use std::rc::*;
+use std::cell::*;
 
 use dyn_clone::*;
 use wasm_bindgen::prelude::*;
@@ -13,7 +14,7 @@ pub mod test_dummy;
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct CreatureProps {
-    citizen: Option<Rc<Citizen>>,
+    pub(crate) citizen: Option<Rc<RefCell<Citizen>>>,
     pub pos: Vec2,
     pub anim: u8,
 }
@@ -25,7 +26,7 @@ impl CreatureProps {
         if self.citizen.is_none() {
             return Option::None;
         }
-        Option::Some(self.citizen.clone().unwrap().as_ref().clone())
+        Option::Some(self.citizen.clone().unwrap().as_ref().clone().into_inner())
     }
 }
 
@@ -54,7 +55,7 @@ impl Creature {
     }
 
     pub(crate) fn make_citizen(&mut self, civ: &mut Civ, name: String) {
-        let citizen = Rc::new(Citizen::new(name));
+        let citizen: Rc<RefCell<Citizen>> = Rc::new(RefCell::new(Citizen::new(name)));
         self.props.citizen = Option::Some(Rc::clone(&citizen));
         civ.add_citizen(citizen);
     }
