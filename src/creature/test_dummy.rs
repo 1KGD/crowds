@@ -1,7 +1,6 @@
 use std::f32;
 
 use noise::*;
-use pathfinding::prelude::*;
 use wasm_bindgen::prelude::*;
 
 use crate::creature::*;
