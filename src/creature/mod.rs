@@ -1,18 +1,20 @@
+use std::cell::*;
 use std::f32;
 use std::rc::*;
 
 use dyn_clone::*;
-use noise::*;
 use wasm_bindgen::prelude::*;
 
 use crate::civ::*;
 use crate::game::*;
 use crate::util::*;
 
+pub mod test_dummy;
+
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct CreatureProps {
-    citizen: Option<Rc<Citizen>>,
+    pub(crate) citizen: Option<Rc<RefCell<Citizen>>>,
     pub pos: Vec2,
     pub anim: u8,
 }
@@ -24,7 +26,7 @@ impl CreatureProps {
         if self.citizen.is_none() {
             return Option::None;
         }
-        Option::Some(self.citizen.clone().unwrap().as_ref().clone())
+        Option::Some(self.citizen.clone().unwrap().as_ref().clone().into_inner())
     }
 }
 
@@ -52,8 +54,8 @@ impl Creature {
         self.behavior.as_mut().tick(delta, world, &mut self.props);
     }
 
-    pub(crate) fn make_citizen(&mut self, civ: &mut Civ) {
-        let citizen = Rc::new(Citizen::new());
+    pub(crate) fn make_citizen(&mut self, civ: &mut Civ, name: String) {
+        let citizen: Rc<RefCell<Citizen>> = Rc::new(RefCell::new(Citizen::new(name)));
         self.props.citizen = Option::Some(Rc::clone(&citizen));
         civ.add_citizen(citizen);
     }
@@ -68,35 +70,3 @@ pub trait CreatureBehavior: DynClone {
 }
 
 dyn_clone::clone_trait_object!(CreatureBehavior);
-
-#[wasm_bindgen]
-#[derive(Clone)]
-pub struct TestDummy {
-    noise: Simplex,
-}
-
-impl TestDummy {
-    pub fn new(seed: u32) -> Self {
-        TestDummy {
-            noise: Simplex::new(seed),
-        }
-    }
-}
-
-impl CreatureBehavior for TestDummy {
-    fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps) {
-        let theta: f32 = f32::floor(
-            (self.noise.get([
-                (creature.pos.x * 96. / world.shape.x_f32()) as f64,
-                (creature.pos.y * 96. / world.shape.y_f32()) as f64,
-            ]) + 0.5) as f32
-                * 8.,
-        ) / 8.
-            * f32::consts::PI
-            * 2.;
-        creature.pos.x += f32::sin(theta) * 5. * delta;
-        creature.pos.y += f32::cos(theta) * 5. * delta;
-
-        creature.anim = theta as u8;
-    }
-}

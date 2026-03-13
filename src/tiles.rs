@@ -1,5 +1,5 @@
-use wasm_bindgen::prelude::*;
 use rand::prelude::*;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 #[repr(u16)]

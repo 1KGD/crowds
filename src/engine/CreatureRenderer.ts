@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import World, { WorldAssets } from "../scenes/World";
 import config from "../../config";
 
-export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
+export default class CreatureRenderer extends Phaser.GameObjects.RenderTexture {
     public override scene: World;
 
     private readonly spriteImage: Phaser.GameObjects.Image;
@@ -46,7 +46,7 @@ export default class CreatureManager extends Phaser.GameObjects.RenderTexture {
         const anim = creature.anim;
         const citizen = creature.citizen;
         try {
-            const [x, y] = [pos.x * config.tileset.tileWidth, pos.y * config.tileset.tileHeight];
+            const [x, y] = [pos[0] * config.tileset.tileWidth, pos[1] * config.tileset.tileHeight];
             if (x + this.spriteImage.width / 2 < worldView.left || x - this.spriteImage.width / 2 > worldView.right || y + this.spriteImage.height / 2 < worldView.top || y - this.spriteImage.height / 2 > worldView.bottom) return;
 
             this.spriteImage.setPosition(x, y);
