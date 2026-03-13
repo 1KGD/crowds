@@ -19,7 +19,7 @@ impl TestDummy {
 }
 
 impl CreatureBehavior for TestDummy {
-    fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps) {
+    fn tick(&mut self, _delta: f32, _world: &World, creature: &mut CreatureProps) {
         if creature.citizen.is_some() {
             let creature_clone: CreatureProps = creature.clone();
             let mut citizen: RefMut<'_, Citizen> =
