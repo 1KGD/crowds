@@ -14,6 +14,8 @@ const enum PlayerAnimations {
     WALK_UP = 'walkUp',
     WALK_LEFT = 'walkLeft',
     WALK_RIGHT = 'walkRight',
+
+    ATTACK_DOWN = "attackDown",
 }
 
 export default class Player extends Phaser.GameObjects.Sprite {
@@ -25,6 +27,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         super(scene, x, y, WorldAssets.PLAYER_SPRITESHEET);
         this.keys = this.setupControls();
         this.setupAnims();
+
+        this.play(PlayerAnimations.ATTACK_DOWN);
 
         this.scene.cameras.main.centerOn(this.x, this.y); // Force the camera to look at the player before they move
     }
@@ -39,10 +43,21 @@ export default class Player extends Phaser.GameObjects.Sprite {
             });
         };;
 
+        const attackAnim = (key: PlayerAnimations, range: Phaser.Types.Animations.GenerateFrameNumbers): void => {
+            this.anims.create({
+                key,
+                frames: this.anims.generateFrameNumbers(WorldAssets.PLAYER_SPRITESHEET, range),
+                frameRate: 10,
+                repeat: -1,
+            });
+        };
+
         walkAnim(PlayerAnimations.WALK_DOWN, { start: 0, end: 3 });
         walkAnim(PlayerAnimations.WALK_UP, { start: 34, end: 37 });
         walkAnim(PlayerAnimations.WALK_LEFT, { start: 51, end: 54 });
         walkAnim(PlayerAnimations.WALK_RIGHT, { start: 17, end: 20 });
+
+        attackAnim(PlayerAnimations.ATTACK_DOWN, { start: 60, end: 120 });
     }
 
     private setupControls(): { [key in PlayerControls]: Phaser.Input.Keyboard.Key } {
