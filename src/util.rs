@@ -1,3 +1,4 @@
+use std::f32;
 use std::ops::*;
 
 use wasm_bindgen::prelude::*;
@@ -5,6 +6,12 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Vec2(pub f32, pub f32);
+
+impl Vec2 {
+    pub fn dist_to(&self, other: Vec2) -> f32 {
+        f32::sqrt(f32::powi(self.0 - other.0, 2) + f32::powi(self.1 - other.1, 2))
+    }
+}
 
 impl From<TileVec2> for Vec2 {
     fn from(value: TileVec2) -> Self {

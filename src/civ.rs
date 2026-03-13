@@ -3,6 +3,7 @@ use std::rc::*;
 
 use wasm_bindgen::prelude::*;
 
+use crate::creature::CreatureProps;
 use crate::util::*;
 
 #[wasm_bindgen]
@@ -19,7 +20,11 @@ impl Civ {
         Civ {
             name: "TestCiv".to_owned(),
             citizens: Vec::new(),
-            tasks: vec![Rc::new(RefCell::new(Task::new()))],
+            tasks: vec![Rc::new(RefCell::new(Task::new(Rc::new(
+                |_creature: &CreatureProps, citizen: &mut Citizen| {
+                    citizen.complete_task();
+                },
+            ))))],
         }
     }
 
@@ -55,13 +60,15 @@ impl Civ {
 pub struct Task {
     pub owned: bool,
     pub target: TileVec2,
+    pub complete: Rc<dyn Fn(&CreatureProps, &mut Citizen) -> ()>,
 }
 
 impl Task {
-    pub fn new() -> Self {
+    pub fn new(complete: Rc<dyn Fn(&CreatureProps, &mut Citizen) -> ()>) -> Self {
         Self {
             owned: false,
-            target: TileVec2(20, 30),
+            target: TileVec2(1020, 1050),
+            complete,
         }
     }
 }
@@ -102,6 +109,12 @@ impl Citizen {
     pub(crate) fn request_task(&mut self) {
         if self.task.is_none() {
             self.wants_task = true;
+        }
+    }
+
+    fn complete_task(&mut self) {
+        if self.task.is_some() {
+            self.task = Option::None;
         }
     }
 }
