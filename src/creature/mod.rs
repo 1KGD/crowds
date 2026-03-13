@@ -1,6 +1,6 @@
+use std::cell::*;
 use std::f32;
 use std::rc::*;
-use std::cell::*;
 
 use dyn_clone::*;
 use wasm_bindgen::prelude::*;
