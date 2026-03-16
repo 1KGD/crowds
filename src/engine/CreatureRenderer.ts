@@ -46,7 +46,7 @@ export default class CreatureRenderer extends Phaser.GameObjects.RenderTexture {
         const anim = creature.anim;
         const citizen = creature.citizen;
         try {
-            const [x, y] = [pos[0] * config.tileset.tileWidth, pos[1] * config.tileset.tileHeight];
+            const [x, y] =/* [this.scene.map.pixelWidth / 2, this.scene.map.pixelHeight / 2];*/[pos[0] * config.tileset.tileWidth, pos[1] * config.tileset.tileHeight];
             if (x + this.spriteImage.width / 2 < worldView.left || x - this.spriteImage.width / 2 > worldView.right || y + this.spriteImage.height / 2 < worldView.top || y - this.spriteImage.height / 2 > worldView.bottom) return;
 
             this.spriteImage.setPosition(x, y);
@@ -54,7 +54,7 @@ export default class CreatureRenderer extends Phaser.GameObjects.RenderTexture {
             this.batchDraw(this.spriteImage);
 
             if (citizen) {
-                this.text.text = `${citizen.name}`;
+                this.text.text = `${pos[0]}, ${pos[1]}`;
                 this.text.setPosition(x - Math.floor(this.text.width / 2), y - Math.floor(this.text.height / 2 + this.spriteImage.height / 2));
                 this.batchDraw(this.text);
             }

@@ -33,36 +33,16 @@ impl Node {
         self.pos.dist_to(rc.borrow().pos) as i32
     }
 
-    pub fn predecessors(&self, pathfinder: &mut Pathfinder) -> Vec<NodeRc> {
-        [TileVec2(1, 0), TileVec2(0, 1)]
-            .iter()
-            .map(|pos: &TileVec2| {
-                let mut pos: TileVec2 = *pos + self.pos;
-                if pos.0 < pathfinder.goal.0 {
-                    pos.0 = -pos.0;
-                }
-                if pos.1 < pathfinder.goal.1 {
-                    pos.1 = -pos.1;
-                }
-                pathfinder.get_node(pos)
-            })
-            .collect()
-    }
-
-    pub fn successors(&self, pathfinder: &mut Pathfinder) -> Vec<NodeRc> {
-        [TileVec2(-1, 0), TileVec2(0, -1)]
-            .iter()
-            .map(|pos: &TileVec2| {
-                let mut pos: TileVec2 = *pos + self.pos;
-                if pos.0 < pathfinder.goal.0 {
-                    pos.0 = -pos.0;
-                }
-                if pos.1 < pathfinder.goal.1 {
-                    pos.1 = -pos.1;
-                }
-                pathfinder.get_node(pos)
-            })
-            .collect()
+    pub fn adjacent(&self, pathfinder: &mut Pathfinder) -> Vec<NodeRc> {
+        [
+            TileVec2(-1, 0),
+            TileVec2(1, 0),
+            TileVec2(0, -1),
+            TileVec2(0, 1),
+        ]
+        .iter()
+        .map(|pos: &TileVec2| pathfinder.get_node(*pos + self.pos))
+        .collect()
     }
 }
 
@@ -93,18 +73,13 @@ impl<'a> Pathfinder<'a> {
         this
     }
 
-    fn calculate_key(&self, node: &Node) -> (usize, usize) {
-        return (
-            (i32::min(node.g, node.rhs) + node.get_heuristic(self.goal)) as usize,
-            i32::min(node.g, node.rhs) as usize,
-        );
+    fn calculate_key(&self, node: &Node) -> usize {
+        (i32::min(node.g, node.rhs) + node.get_heuristic(self.goal)) as usize
     }
 
     fn add_rc_to_queue(&mut self, rc: NodeRc) {
-        let (key0, key1) = self.calculate_key(&rc.borrow());
-        self.queue
-            .insert(key0.clamp(0, self.queue.len()), Rc::clone(&rc));
-        self.queue.insert(key1.clamp(0, self.queue.len()), rc);
+        let key: usize = self.calculate_key(&rc.borrow());
+        self.queue.insert(key.clamp(0, self.queue.len()), rc);
     }
 
     fn get_node(&mut self, pos: TileVec2) -> NodeRc {
@@ -123,18 +98,20 @@ impl<'a> Pathfinder<'a> {
     pub fn next_pos(&mut self) -> Option<TileVec2> {
         let start_rc: NodeRc = Rc::clone(&self.start);
         let start: Ref<'_, Node> = start_rc.borrow();
-        let successors: Vec<NodeRc> = start.successors(self);
-        let next_node: Option<&NodeRc> = successors.first();
-        if next_node.is_none() {
-            return Option::None;
-        }
-        Option::Some(next_node.unwrap().borrow().pos)
+        let successors: Vec<NodeRc> = start.adjacent(self);
+        let mut next_node: Ref<'_, Node> = start;
+        successors.iter().for_each(|rc: &Rc<RefCell<Node>>| {
+            let node: Ref<'_, Node> = rc.borrow();
+            if node.g < next_node.g {
+                next_node = node;
+            }
+        });
+        Option::Some(next_node.pos)
     }
 
     pub fn refresh(&mut self) {
         let goal_node: Node = Node::new(self.goal);
-        while self.get_top_key() < self.calculate_key(&goal_node).0 || goal_node.rhs != goal_node.g
-        {
+        while self.get_top_key() < self.calculate_key(&goal_node) || goal_node.rhs != goal_node.g {
             let mut rc: NodeRc = self.queue.pop().unwrap();
             let rc_clone: NodeRc = Rc::clone(&rc);
             let mut node: RefMut<'_, Node> = rc_clone.borrow_mut();
@@ -144,7 +121,7 @@ impl<'a> Pathfinder<'a> {
                 node.g = i32::MAX;
                 self.update_node(&mut rc);
             }
-            node.successors(self).iter().for_each(|successor: &NodeRc| {
+            node.adjacent(self).iter().for_each(|successor: &NodeRc| {
                 self.update_node(&successor);
             });
         }
@@ -154,7 +131,7 @@ impl<'a> Pathfinder<'a> {
         let mut node: RefMut<'_, Node> = rc.borrow_mut();
         if node.pos != self.start.borrow().pos {
             let mut new_rhs: i32 = i32::MAX;
-            node.predecessors(self).iter().for_each(|pre: &NodeRc| {
+            node.adjacent(self).iter().for_each(|pre: &NodeRc| {
                 let predecessor: Ref<'_, Node> = pre.borrow();
                 new_rhs = i32::min(new_rhs, predecessor.g + predecessor.get_cost_to(&rc));
             });
