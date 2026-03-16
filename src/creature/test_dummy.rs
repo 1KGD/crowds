@@ -1,4 +1,5 @@
 use std::f32;
+use std::path;
 
 use wasm_bindgen::prelude::*;
 
@@ -16,7 +17,11 @@ impl TestDummy {
 
     pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2, world: &World) {
         let pathfinder: Pathfinder<'_> = Pathfinder::new(world, TileVec2::from(creature.pos), pos);
-        creature.pos.clone_from(&Vec2::from(pathfinder.next_pos()));
+        let next_pos: Option<TileVec2> = pathfinder.next_pos();
+        if next_pos.is_none() {
+            return;
+        }
+        creature.pos.clone_from(&Vec2::from(next_pos.unwrap()));
     }
 }
 

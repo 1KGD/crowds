@@ -73,8 +73,13 @@ impl<'a> Pathfinder<'a> {
         usize::MAX
     }
 
-    pub fn next_pos(&self) -> TileVec2 {
-        self.start.borrow().pos.clone()
+    pub fn next_pos(&self) -> Option<TileVec2> {
+        let start: Ref<'_, Node> = self.start.borrow();
+        let next_node: Option<&Rc<RefCell<Node>>> = start.successors.first();
+        if next_node.is_none() {
+            return Option::None;
+        }
+        Option::Some(next_node.unwrap().borrow().pos.clone())
     }
 
     pub fn refresh(&mut self) {
