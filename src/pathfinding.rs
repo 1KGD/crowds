@@ -35,7 +35,6 @@ impl Node {
     }
 }
 
-#[derive(Clone)]
 pub struct Pathfinder<'a> {
     queue: Vec<Rc<RefCell<Node>>>,
     start: Rc<RefCell<Node>>,
@@ -67,7 +66,7 @@ impl<'a> Pathfinder<'a> {
 
     fn add_rc_to_queue(&mut self, rc: Rc<RefCell<Node>>) {
         let key: usize = self.calculate_key(&rc.borrow());
-        self.queue.insert(key, rc);
+        self.queue.insert(key.clamp(0, self.queue.len()), rc);
     }
 
     fn get_top_key(&self) -> usize {

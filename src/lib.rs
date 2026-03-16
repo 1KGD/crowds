@@ -3,12 +3,12 @@ extern crate noise;
 extern crate rand;
 extern crate wasm_bindgen;
 
+mod civ;
 mod creature;
 mod game;
+mod pathfinding;
 mod tiles;
 mod util;
-mod civ;
-mod pathfinding;
 pub use crate::game::*;
 
 use std::panic;
