@@ -7,24 +7,21 @@ use crate::pathfinding::*;
 
 #[wasm_bindgen]
 #[derive(Clone)]
-pub struct TestDummy {
-    pathfinder: Pathfinder,
-}
+pub struct TestDummy {}
 
 impl TestDummy {
-    pub fn new() -> Self {
-        TestDummy {
-            pathfinder: Pathfinder::new(),
-        }
+    pub fn new(world: &World) -> Self {
+        TestDummy {}
     }
 
-    pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2) {
-        creature.pos = Vec2::from(pos);
+    pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2, world: &World) {
+        let pathfinder: Pathfinder<'_> = Pathfinder::new(world);
+        creature.pos.clone_from(&Vec2::from(pos));
     }
 }
 
 impl CreatureBehavior for TestDummy {
-    fn tick(&mut self, _delta: f32, _world: &World, creature: &mut CreatureProps) {
+    fn tick(&mut self, _delta: f32, world: &World, creature: &mut CreatureProps) {
         if creature.citizen.is_some() {
             let creature_clone: CreatureProps = creature.clone();
             let mut citizen: RefMut<'_, Citizen> =
@@ -32,7 +29,7 @@ impl CreatureBehavior for TestDummy {
             if citizen.task.is_some() {
                 let citizen_clone = citizen.clone();
                 let task: RefMut<'_, Task> = citizen_clone.task.as_ref().unwrap().borrow_mut();
-                self.move_towards(creature, task.target);
+                self.move_towards(creature, task.target, world);
                 if creature.pos.dist_to(Vec2::from(task.target)) <= 0.1 {
                     (*task.complete.as_ref())(&creature, &mut citizen);
                 }

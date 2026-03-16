@@ -4,6 +4,7 @@ use std::rc::*;
 use std::usize;
 
 use crate::util::*;
+use crate::*;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct Node {
@@ -35,19 +36,21 @@ impl Node {
 }
 
 #[derive(Clone)]
-pub struct Pathfinder {
+pub struct Pathfinder<'a> {
     queue: Vec<Rc<RefCell<Node>>>,
     start: TileVec2,
     goal: TileVec2,
+    world: &'a World,
 }
 
-impl Pathfinder {
-    pub fn new() -> Self {
+impl<'a> Pathfinder<'a> {
+    pub fn new(world: &'a World) -> Self {
         let queue: Vec<Rc<RefCell<Node>>> = Vec::new();
         let mut this: Pathfinder = Self {
             queue,
             start: TileVec2(0, 0),
             goal: TileVec2(20, 18),
+            world,
         };
 
         let mut start: Node = Node::new(this.start);
