@@ -3,14 +3,19 @@ use std::f32;
 use wasm_bindgen::prelude::*;
 
 use crate::creature::*;
+use crate::pathfinding::*;
 
 #[wasm_bindgen]
 #[derive(Clone)]
-pub struct TestDummy {}
+pub struct TestDummy {
+    pathfinder: Pathfinder,
+}
 
 impl TestDummy {
     pub fn new() -> Self {
-        TestDummy {}
+        TestDummy {
+            pathfinder: Pathfinder::new(),
+        }
     }
 
     pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2) {

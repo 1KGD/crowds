@@ -77,6 +77,12 @@ impl TileVec2 {
     }
 }
 
+impl TileVec2 {
+    pub fn dist_to(&self, other: TileVec2) -> f32 {
+        Vec2::from(*self).dist_to(Vec2::from(other))
+    }
+}
+
 impl From<Vec2> for TileVec2 {
     fn from(value: Vec2) -> Self {
         TileVec2(value.0 as i32, value.1 as i32)
