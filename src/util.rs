@@ -65,16 +65,6 @@ impl TileVec2 {
     pub fn to_index(&self, width: u32) -> usize {
         self.0 as usize + self.1 as usize * width as usize
     }
-
-    pub fn adjacent(&self) -> Vec<Self> {
-        let &Self(x, y) = self;
-        vec![
-            Self(x + 1, y),
-            Self(x - 1, y),
-            Self(x, y + 1),
-            Self(x, y + 1),
-        ]
-    }
 }
 
 impl TileVec2 {
