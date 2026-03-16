@@ -8,6 +8,7 @@ mod game;
 mod tiles;
 mod util;
 mod civ;
+mod pathfinding;
 pub use crate::game::*;
 
 use std::panic;
