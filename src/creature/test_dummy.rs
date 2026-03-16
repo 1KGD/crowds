@@ -10,13 +10,13 @@ use crate::pathfinding::*;
 pub struct TestDummy {}
 
 impl TestDummy {
-    pub fn new(world: &World) -> Self {
+    pub fn new() -> Self {
         TestDummy {}
     }
 
     pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2, world: &World) {
-        let pathfinder: Pathfinder<'_> = Pathfinder::new(world);
-        creature.pos.clone_from(&Vec2::from(pos));
+        let pathfinder: Pathfinder<'_> = Pathfinder::new(world, TileVec2::from(creature.pos), pos);
+        creature.pos.clone_from(&Vec2::from(pathfinder.next_pos()));
     }
 }
 
@@ -27,7 +27,7 @@ impl CreatureBehavior for TestDummy {
             let mut citizen: RefMut<'_, Citizen> =
                 creature_clone.citizen.as_ref().unwrap().borrow_mut();
             if citizen.task.is_some() {
-                let citizen_clone = citizen.clone();
+                let citizen_clone: Citizen = citizen.clone();
                 let task: RefMut<'_, Task> = citizen_clone.task.as_ref().unwrap().borrow_mut();
                 self.move_towards(creature, task.target, world);
                 if creature.pos.dist_to(Vec2::from(task.target)) <= 0.1 {

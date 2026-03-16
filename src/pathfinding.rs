@@ -38,24 +38,23 @@ impl Node {
 #[derive(Clone)]
 pub struct Pathfinder<'a> {
     queue: Vec<Rc<RefCell<Node>>>,
-    start: TileVec2,
+    start: Rc<RefCell<Node>>,
     goal: TileVec2,
     world: &'a World,
 }
 
 impl<'a> Pathfinder<'a> {
-    pub fn new(world: &'a World) -> Self {
+    pub fn new(world: &'a World, start: TileVec2, goal: TileVec2) -> Self {
         let queue: Vec<Rc<RefCell<Node>>> = Vec::new();
         let mut this: Pathfinder = Self {
             queue,
-            start: TileVec2(0, 0),
-            goal: TileVec2(20, 18),
+            start: Rc::new(RefCell::new(Node::new(start))),
+            goal,
             world,
         };
 
-        let mut start: Node = Node::new(this.start);
-        start.rhs = 0;
-        this.add_node_to_queue(start);
+        this.start.borrow_mut().rhs = 0;
+        this.add_rc_to_queue(Rc::clone(&this.start));
 
         this.refresh();
 
@@ -71,12 +70,12 @@ impl<'a> Pathfinder<'a> {
         self.queue.insert(key, rc);
     }
 
-    fn add_node_to_queue(&mut self, node: Node) {
-        self.add_rc_to_queue(Rc::new(RefCell::new(node)));
-    }
-
     fn get_top_key(&self) -> usize {
         usize::MAX
+    }
+
+    pub fn next_pos(&self) -> TileVec2 {
+        self.start.borrow().pos.clone()
     }
 
     pub fn refresh(&mut self) {
@@ -101,7 +100,7 @@ impl<'a> Pathfinder<'a> {
 
     fn update_node(&mut self, rc: &Rc<RefCell<Node>>) {
         let mut node: RefMut<'_, Node> = rc.borrow_mut();
-        if node.pos != self.start {
+        if node.pos != self.start.borrow().pos {
             node.rhs = i32::MAX;
             let mut new_rhs: i32 = node.rhs;
             node.predecessors

@@ -72,14 +72,14 @@ impl World {
 
         (0..8).for_each(|i: u32| {
             let mut creature: Creature =
-                Creature::new(Box::new(TestDummy::new(&this)), Vec2::from(shape) / 2.);
+                Creature::new(Box::new(TestDummy::new()), Vec2::from(shape) / 2.);
             creature.make_citizen(&mut this.civ, format!("thing {}", i + 1));
             this.creatures.push(Rc::new(creature));
         });
 
         (0..1016).for_each(|_i: u32| {
             this.creatures.push(Rc::new(Creature::new(
-                Box::new(TestDummy::new(&this)),
+                Box::new(TestDummy::new()),
                 Vec2::from(shape) / 2.,
             )))
         });
