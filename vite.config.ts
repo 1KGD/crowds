@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite';
-import preloadPlugin from 'vite-preload/plugin';
 import wasm from 'vite-plugin-wasm';
 
 export default defineConfig({
@@ -9,7 +8,6 @@ export default defineConfig({
     },
     base: "/crowds/",
     plugins: [
-        preloadPlugin(),
         wasm()
     ],
 });
