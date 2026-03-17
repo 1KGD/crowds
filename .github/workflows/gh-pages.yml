@@ -35,7 +35,7 @@ jobs:
         with:
           toolchain: stable
       - name: Install NPM Dependencies
-        run: npm install
+        run: npm install --ignore-scripts
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.4.0
         with:
