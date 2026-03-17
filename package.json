@@ -17,6 +17,7 @@
     "scripts": {
         "preinstall": "make install && make build",
         "dev": "concurrently --kill-others --names rust,vite -c red,yellow 'make watch' 'vite .'",
+        "preview": "npm run build-rust && npm run build-typescript && vite preview",
         "build-typescript": "vite build",
         "build-rust": "make",
         "clean": "make clean"
