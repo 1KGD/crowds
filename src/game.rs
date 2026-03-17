@@ -29,7 +29,7 @@ pub struct World {
 #[wasm_bindgen]
 impl World {
     #[wasm_bindgen(constructor)]
-    pub fn new(width: u32, height: u32) -> World {
+    pub fn new(width: u32, height: u32) -> Self {
         let shape: TileVec2 = TileVec2(width as i32, height as i32);
         let size: u32 = width * height;
 
@@ -62,31 +62,29 @@ impl World {
             })
             .collect();
 
-        let mut civ: Civ = Civ::new();
+        let mut this: Self = Self {
+            shape,
+            surface,
+            terrain,
+            creatures: Vec::new(),
+            civ: Civ::new(),
+        };
 
-        let mut creatures: Vec<Rc<Creature>> = (0..8)
-            .map(|i: u32| {
-                let mut creature: Creature =
-                    Creature::new(Box::new(TestDummy::new()), Vec2::from(shape) / 2.);
-                creature.make_citizen(&mut civ, format!("thing {}", i + 1));
-                Rc::new(creature)
-            })
-            .collect();
+        (0..8).for_each(|i: u32| {
+            let mut creature: Creature =
+                Creature::new(Box::new(TestDummy::new()), Vec2::from(shape) / 2.);
+            creature.make_citizen(&mut this.civ, format!("thing {}", i + 1));
+            this.creatures.push(Rc::new(creature));
+        });
 
         (0..1016).for_each(|_i: u32| {
-            creatures.push(Rc::new(Creature::new(
+            this.creatures.push(Rc::new(Creature::new(
                 Box::new(TestDummy::new()),
                 Vec2::from(shape) / 2.,
             )))
         });
 
-        World {
-            shape,
-            surface,
-            terrain,
-            creatures,
-            civ,
-        }
+        this
     }
 
     fn surface_gen(pos: TileVec2, noise: &Simplex, rng: &mut dyn Rng) -> Tile {
