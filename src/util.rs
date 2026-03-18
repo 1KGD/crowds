@@ -4,12 +4,18 @@ use std::ops::*;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-#[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, PartialOrd)]
 pub struct Vec2(pub f32, pub f32);
 
 impl Vec2 {
     pub fn dist_to(&self, other: Vec2) -> f32 {
         f32::sqrt(f32::powi(self.0 - other.0, 2) + f32::powi(self.1 - other.1, 2))
+    }
+}
+
+impl PartialEq for Vec2 {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0 && self.1 == other.1
     }
 }
 
@@ -58,12 +64,18 @@ impl Div<f32> for Vec2 {
 }
 
 #[wasm_bindgen]
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, Hash, Eq, Ord, PartialOrd)]
 pub struct TileVec2(pub i32, pub i32);
 
 impl TileVec2 {
     pub fn to_index(&self, width: u32) -> usize {
         self.0 as usize + self.1 as usize * width as usize
+    }
+}
+
+impl PartialEq for TileVec2 {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0 && self.1 == other.1
     }
 }
 

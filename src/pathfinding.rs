@@ -102,7 +102,7 @@ impl<'a> Pathfinder<'a> {
         let mut next_node: Ref<'_, Node> = start;
         successors.iter().for_each(|rc: &Rc<RefCell<Node>>| {
             let node: Ref<'_, Node> = rc.borrow();
-            if node.g < next_node.g {
+            if node.rhs < next_node.rhs {
                 next_node = node;
             }
         });
