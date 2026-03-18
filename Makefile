@@ -6,7 +6,6 @@ watch:
 
 install:
 	cargo install wasm-pack
-	npm i
 
 install-dev:
 	make install
