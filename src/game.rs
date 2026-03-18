@@ -16,7 +16,7 @@ const SEED: u64 = 1248815214;
 
 #[wasm_bindgen]
 #[derive(Clone)]
-pub struct World {
+pub struct Game {
     pub shape: TileVec2,
     surface: Vec<Tile>,
     terrain: Vec<Tile>,
@@ -27,7 +27,7 @@ pub struct World {
 }
 
 #[wasm_bindgen]
-impl World {
+impl Game {
     #[wasm_bindgen(constructor)]
     pub fn new(width: u32, height: u32) -> Self {
         let shape: TileVec2 = TileVec2(width as i32, height as i32);
@@ -157,7 +157,7 @@ impl World {
     }
 
     pub fn tick(&mut self, delta: f32) {
-        let this: World = self.clone();
+        let this: Game = self.clone();
         self.creatures
             .iter_mut()
             .for_each(|creature: &mut Rc<Creature>| {

@@ -28,7 +28,7 @@ export default class World extends Phaser.Scene {
     public override game: Engine;
 
     public player: Player;
-    public backend: wasm.World;
+    public backend: wasm.Game;
     public map: MapRenderer;
     public creatures: CreatureRenderer;
 
@@ -42,7 +42,7 @@ export default class World extends Phaser.Scene {
 
     public create(): void {
         this.game.loadingStatus(t("loading.wasm"));
-        this.backend = new wasm.World(config.world.width, config.world.height);
+        this.backend = new wasm.Game(config.world.width, config.world.height);
 
         this.map = new MapRenderer(this);
         this.add.existing(this.map);

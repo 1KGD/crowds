@@ -14,8 +14,9 @@ impl TestDummy {
         TestDummy {}
     }
 
-    pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2, world: &World) {
-        let mut pathfinder: Pathfinder<'_> = Pathfinder::new(world, TileVec2::from(creature.pos), pos);
+    pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2, world: &Game) {
+        let mut pathfinder: Pathfinder<'_> =
+            Pathfinder::new(world, TileVec2::from(creature.pos), pos);
         let next_pos: Option<TileVec2> = pathfinder.next_pos();
         if next_pos.is_none() {
             return;
@@ -25,7 +26,7 @@ impl TestDummy {
 }
 
 impl CreatureBehavior for TestDummy {
-    fn tick(&mut self, _delta: f32, world: &World, creature: &mut CreatureProps) {
+    fn tick(&mut self, _delta: f32, world: &Game, creature: &mut CreatureProps) {
         if creature.citizen.is_some() {
             let creature_clone: CreatureProps = creature.clone();
             let mut citizen: RefMut<'_, Citizen> =

@@ -50,7 +50,7 @@ impl Creature {
         }
     }
 
-    pub(crate) fn tick(&mut self, delta: f32, world: &World) {
+    pub(crate) fn tick(&mut self, delta: f32, world: &Game) {
         self.behavior.as_mut().tick(delta, world, &mut self.props);
     }
 
@@ -66,7 +66,7 @@ impl Creature {
 }
 
 pub trait CreatureBehavior: DynClone {
-    fn tick(&mut self, delta: f32, world: &World, creature: &mut CreatureProps);
+    fn tick(&mut self, delta: f32, world: &Game, creature: &mut CreatureProps);
 }
 
 dyn_clone::clone_trait_object!(CreatureBehavior);

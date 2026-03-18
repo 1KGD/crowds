@@ -51,11 +51,11 @@ pub struct Pathfinder<'a> {
     queue: Vec<NodeRc>,
     start: NodeRc,
     goal: TileVec2,
-    world: &'a World,
+    world: &'a Game,
 }
 
 impl<'a> Pathfinder<'a> {
-    pub fn new(world: &'a World, start: TileVec2, goal: TileVec2) -> Self {
+    pub fn new(world: &'a Game, start: TileVec2, goal: TileVec2) -> Self {
         let queue: Vec<NodeRc> = Vec::new();
         let mut this: Pathfinder = Self {
             nodes: HashMap::new(),
