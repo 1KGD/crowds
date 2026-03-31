@@ -67,7 +67,7 @@ impl Task {
     pub fn new(complete: Rc<dyn Fn(&CreatureProps, &mut Citizen) -> ()>) -> Self {
         Self {
             owned: false,
-            target: TileVec2(1020, 1020),
+            target: TileVec2(900, 1010),
             complete,
         }
     }

@@ -34,8 +34,8 @@ impl TestDummy {
             return;
         }
         let next = next.unwrap();
-        creature.pos.0 += (next.x as f32 - creature.pos.0) / 10.;
-        creature.pos.1 += (next.y as f32 - creature.pos.1) / 10.;
+        creature.pos.0 += (next.x as f32 - creature.pos.0) / 100.;
+        creature.pos.1 += (next.y as f32 - creature.pos.1) / 100.;
     }
 }
 
