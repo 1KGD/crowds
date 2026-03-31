@@ -16,7 +16,8 @@
         "strictNullChecks": false,
         "forceConsistentCasingInFileNames": true,
         "types": [
-            "vite/client"
+            "vite/client",
+            "phaser"
         ],
         "lib": [
             "ES2024",
