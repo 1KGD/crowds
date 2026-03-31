@@ -1,9 +1,9 @@
 use std::f32;
 
+use basic_pathfinding::{coord::Coord, pathfinding::*};
 use wasm_bindgen::prelude::*;
 
 use crate::creature::*;
-use crate::pathfinding::*;
 
 #[wasm_bindgen]
 #[derive(Clone)]
@@ -15,12 +15,27 @@ impl TestDummy {
     }
 
     pub fn move_towards(&mut self, creature: &mut CreatureProps, pos: TileVec2, world: &World) {
-        let mut pathfinder: Pathfinder<'_> = Pathfinder::new(world, TileVec2::from(creature.pos), pos);
-        let next_pos: Option<TileVec2> = pathfinder.next_pos();
-        if next_pos.is_none() {
+        let pathfound = find_path(
+            &world.current_grid.as_ref().unwrap(),
+            Coord::new(creature.pos.0 as i32, creature.pos.1 as i32),
+            Coord::new(pos.0, pos.1),
+            SearchOpts {
+                ..Default::default()
+            },
+        );
+
+        if pathfound.is_none() {
             return;
         }
-        creature.pos = Vec2::from(next_pos.unwrap());
+        let path = pathfound.unwrap();
+
+        let next = path.get(1);
+        if next.is_none() {
+            return;
+        }
+        let next = next.unwrap();
+        creature.pos.0 += (next.x as f32 - creature.pos.0) / 10.;
+        creature.pos.1 += (next.y as f32 - creature.pos.1) / 10.;
     }
 }
 

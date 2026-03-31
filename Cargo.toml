@@ -7,6 +7,7 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
+basic-pathfinding = "0.2.8"
 console_error_panic_hook = "0.1.7"
 dyn-clone = "1.0.20"
 getrandom = { version = "0.4.2", features = ["wasm_js"] }

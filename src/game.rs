@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use crate::util::*;
+use basic_pathfinding::grid::Grid;
 use noise::*;
 use rand::prelude::*;
 use wasm_bindgen::prelude::*;
@@ -20,6 +21,7 @@ pub struct World {
     pub shape: TileVec2,
     surface: Vec<Tile>,
     terrain: Vec<Tile>,
+    pub(crate) current_grid: Option<Grid>,
 
     creatures: Vec<Rc<Creature>>,
 
@@ -67,6 +69,7 @@ impl World {
             surface,
             terrain,
             creatures: Vec::new(),
+            current_grid: Option::None,
             civ: Civ::new(),
         };
 
@@ -77,12 +80,14 @@ impl World {
             this.creatures.push(Rc::new(creature));
         });
 
-        (0..1016).for_each(|_i: u32| {
+        /*(0..1016).for_each(|_i: u32| {
             this.creatures.push(Rc::new(Creature::new(
                 Box::new(TestDummy::new()),
                 Vec2::from(shape) / 2.,
             )))
-        });
+        });*/
+
+        this.update_grid();
 
         this
     }
@@ -157,12 +162,30 @@ impl World {
     }
 
     pub fn tick(&mut self, delta: f32) {
-        let this: World = self.clone();
+        let mut this: World = self.clone();
         self.creatures
             .iter_mut()
             .for_each(|creature: &mut Rc<Creature>| {
                 Rc::make_mut(creature).tick(delta, &this);
             });
         self.civ.tick();
+    }
+
+    fn update_grid(&mut self) {
+        let mut tiles: Vec<Vec<i32>> = vec![];
+        let mut current_row: Vec<i32> = vec![];
+        for (i, tile) in self.surface.iter().enumerate() {
+            current_row.push(*tile as i32);
+            if (i + 1) % (self.shape.0 as usize) == 0 {
+                tiles.push(current_row);
+                current_row = vec![];
+            }
+        }
+
+        self.current_grid = Option::Some(Grid {
+            tiles,
+            walkable_tiles: vec![Tile::Grass as i32],
+            ..Default::default()
+        });
     }
 }

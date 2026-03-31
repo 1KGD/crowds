@@ -46,7 +46,7 @@ export default class Engine extends Phaser.Game {
     };
 
     public loadingStatus(status: string): void {
-
+        console.log(status);
     }
 
     public finishLoading(): void {

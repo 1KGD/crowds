@@ -6,7 +6,6 @@ extern crate wasm_bindgen;
 mod civ;
 mod creature;
 mod game;
-mod pathfinding;
 mod tiles;
 mod util;
 pub use crate::game::*;
